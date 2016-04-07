@@ -1,0 +1,16 @@
+<ion-view view-title="Charts">
+  <ion-content>
+    <ion-list>
+      <ion-item class="item-remove-animate item-thumbnail-left item-icon-right" ng-repeat="chart in charts" type="item-text-wrap" href="#/tab/charts/{{chart.id}}">
+        <img ng-src="{{chart.face}}" />
+        <h2>{{chart.name}}</h2>
+        <p>{{chart.lastText}}</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+
+        <ion-option-button class="button-assertive" ng-click="remove(chart)">
+          Delete
+        </ion-option-button>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

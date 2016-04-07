@@ -1,0 +1,16 @@
+<ion-view view-title="Dashboards">
+  <ion-content>
+    <ion-list>
+      <ion-item class="item-remove-animate item-thumbnail-left item-icon-right" ng-repeat="dash in dashboards" type="item-text-wrap" href="#/tab/dash/{{dash.id}}">
+        <img ng-src="{{dash.face}}" />
+        <h2>{{dash.name}}</h2>
+        <p>{{dash.lastText}}</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+
+        <ion-option-button class="button-assertive" ng-click="remove(dash)">
+          Delete
+        </ion-option-button>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>
