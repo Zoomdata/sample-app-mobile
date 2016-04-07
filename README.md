@@ -4,13 +4,13 @@ This is a mobile data app example using the Zoomdata v2.2 with its SDK v2.0 to q
 
 ## Commands
 
-1. Node js is a pre-requisite
-2. Install the Ionic CLI
+* Node js is a pre-requisite
+* Install the Ionic CLI
 ```
 	npm install -g ionic
 ```
-3. Clone this repo
-4. Start the ionic client tool
+* Clone this repo
+* Start the ionic client tool
 ```
 	ionic serve
 ```
