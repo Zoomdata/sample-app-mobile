@@ -26,7 +26,7 @@ angular.module('starter.controllers', ['starter.services'])
     var trendDayPromise = Charts.fillRTSDayTrend();
     $q.all([barPromise, piePromise, trendPromise, trendDayPromise]).then(function(data) {
         $scope.trendDayCfg = angular.copy(data[3]);
-        // charts.js renders blank otherwise
+        // workaround as charts.js cannot render more than one chart update at the same time
         delayed( function() {
           $scope.trendCfg = angular.copy(data[2]);
         }, 900)

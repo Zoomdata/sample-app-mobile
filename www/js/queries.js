@@ -153,7 +153,7 @@ angular.module('starter.queries', [])
 	o.genericQuery = function(query) {
 	    return function(processData) {
 	    	return $q(function (resolve, reject){
-	    		let queryData = [];
+	    		var queryData = [];
 				ZDClient
 				.then(function(client) {
 				  window.client = client;
