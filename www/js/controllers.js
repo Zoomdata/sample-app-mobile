@@ -13,13 +13,33 @@ angular.module('starter.controllers', ['starter.services'])
   var play;
   var firstPlay = false;
 
+  $scope.onClick = function (points, evt) {
+    // test to capture onClick event for trends.  See templates/dash-detail.html
+    console.log(points, evt);
+  };
+
   var fillDashboard = function() {
+    // console.log('in fillDashboard');
     var barPromise = Charts.fillRTSBar();
     var piePromise = Charts.fillRTSPie();
-    $q.all([barPromise, piePromise]).then(function(data) {
-        $scope.barCfg = angular.copy(data[0]);
+    var trendPromise = Charts.fillRTSTrend();
+    var trendDayPromise = Charts.fillRTSDayTrend();
+    $q.all([barPromise, piePromise, trendPromise, trendDayPromise]).then(function(data) {
+        $scope.trendDayCfg = angular.copy(data[3]);
         // charts.js renders blank otherwise
-        delayedCopy(data[1])
+        delayed( function() {
+          $scope.trendCfg = angular.copy(data[2]);
+        }, 900)
+        .then( 
+            delayed(function() {
+              $scope.barCfg = angular.copy(data[0]);
+            }, 2000)
+        )
+        .then(
+            delayed( function() {
+              $scope.pieCfg = angular.copy(data[1]); 
+            }, 2600)
+        )
         .then( startPlay() );
       }, function(reason) {
         console.log('Failed: ' + reason);
@@ -27,13 +47,12 @@ angular.module('starter.controllers', ['starter.services'])
     );
   }
       
-  var delayedCopy = function(data) {
-    return $timeout( function() {
-      $scope.pieCfg = angular.copy(data);
-    }, 500);    
+  var delayed = function( myFunction, delay ) {
+    return $timeout( myFunction, delay);    
   }
 
   var startPlay = function() {
+    // console.log('in startPlay');
     // Don't start playing if the player is already on
     if ( angular.isDefined(play) ) return;
     firstPlay = true;
@@ -41,25 +60,36 @@ angular.module('starter.controllers', ['starter.services'])
     play = $interval( function() {
       var barPromise = Charts.fillRTSBar();
       var piePromise = Charts.fillRTSPie();
-      $q.all([barPromise, piePromise]).then(function(newData) {
-          $scope.barCfg.data = newData[0].data;
-          $scope.barCfg.labels = newData[0].labels;
-          $scope.pieCfg.data = newData[1].data;
-          $scope.pieCfg.labels = newData[1].labels;
+      var trendPromise = Charts.fillRTSTrend();
+      var trendDayPromise = Charts.fillRTSDayTrend();
+      $q.all([barPromise, piePromise, trendPromise, trendDayPromise]).then(function(newData) {
+          delayed( function() {
+            $scope.barCfg.data = newData[0].data;
+            $scope.barCfg.labels = newData[0].labels;
+          }, 900)
+          .then(
+            delayed( function() {
+              $scope.pieCfg.data = newData[1].data;
+              $scope.pieCfg.labels = newData[1].labels;
+            }, 1600)
+          )
+          .then(
+            delayed( function() {
+              $scope.trendCfg.data = newData[2].data;
+              $scope.trendCfg.labels = newData[2].labels;
+            }, 1600)
+          )
+          .then(
+            delayed( function() {
+              $scope.trendDayCfg.data = newData[3].data;
+              $scope.trendDayCfg.labels = newData[3].labels;
+            }, 1600)
+          )
 
         }, function(reason) {
           console.log('Failed: ' + reason);
         }
       );
-      // var data = $scope.barCfg.data;
-      // var newBarData = data.map(function(series) {
-      //   return randomizeArray(series);
-      // });
-      // $scope.barCfg.data = newBarData;
-
-      // data = $scope.pieCfg.data;
-      // var newPieData = randomizeArray(data);
-      // $scope.pieCfg.data = newPieData;
 
     }, 4000);
   }

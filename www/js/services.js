@@ -118,6 +118,61 @@ angular.module('starter.services', ['starter.queries'])
       return Rts.queryProdCat(processData);
   }
 
+  o.fillRTSTrend = function() {
+      var processData = function(queryData) {
+        result = {};
+
+        var sales = queryData.map(function(item) {
+            return item.current.metrics.price.sum.toFixed(0);
+        });
+        var plannedSales = queryData.map(function(item) {
+            return item.current.metrics.plannedsales.sum.toFixed(0);
+        });
+
+        var labels = queryData.map(function(item, index) {
+            return index % 5 ? "" : moment(item.group[0],'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+        }); 
+
+        result.type = 'line';
+        result.series = ['Sales', 'Planned Sales'];
+        result.data = [sales, plannedSales];
+        result.labels = labels;
+        result.fillColor = ['#2b83ba', '#fdae61'];
+
+        return result;
+      }
+
+      return Rts.querySalesTrend(processData);
+  }
+
+    o.fillRTSDayTrend = function() {
+      var processData = function(queryData) {
+        result = {};
+
+        var sales = queryData.map(function(item) {
+            return item.current.metrics.price.sum.toFixed(0);
+        });
+        var plannedSales = queryData.map(function(item) {
+            return item.current.metrics.plannedsales.sum.toFixed(0);
+        });
+
+        var labels = queryData.map(function(item, index) {
+            return moment(item.group[0],'YYYY-MM-DD HH:mm:ss')
+                  .format('MM/DD/YYYY');
+        }); 
+
+        result.type = 'line';
+        result.series = ['Sales', 'Planned Sales'];
+        result.data = [sales, plannedSales];
+        result.labels = labels;
+        result.fillColor = ['#2b83ba', '#fdae61'];
+
+        return result;
+      }
+
+      return Rts.queryDaySalesTrend(processData);
+  }
+
   o.all = function() {
     return o.charts;
   }

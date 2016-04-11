@@ -22,6 +22,21 @@ function ZDClientFactory($window) {
 // Define dependencies
 ZDClientFactory.$inject = ['$window'];
 
+Chart.defaults.global.scaleLabel = function (label) {
+    var v = label.value;
+    if (v > 999999 ) {
+      result = '$' + numeral(v/1000000).format('0,0') + ' M';
+      // console.log(v);
+      // console.log(result);
+    } else if (label.value > 99999) {
+      result = '$' + numeral(v/1000).format('0,0') + ' k';
+    } else {
+      result = '$' + numeral(v).format('0,0');
+    }
+    return result;
+};
+
+
 
 // Ionic Starter App
 
@@ -122,4 +137,6 @@ angular.module('starter', ['ionic', 'chart.js', 'starter.controllers'])
 
 })
 .constant('chroma', window.chroma)
+.constant('moment', window.moment)
+.constant('numeral', window.numeral)
 ;
