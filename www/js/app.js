@@ -26,9 +26,7 @@ Chart.defaults.global.scaleLabel = function (label) {
     var v = label.value;
     if (v > 999999 ) {
       result = '$' + numeral(v/1000000).format('0,0') + ' M';
-      // console.log(v);
-      // console.log(result);
-    } else if (label.value > 99999) {
+    } else if (label.value > 999999) {
       result = '$' + numeral(v/1000).format('0,0') + ' k';
     } else {
       result = '$' + numeral(v).format('0,0');
@@ -36,7 +34,18 @@ Chart.defaults.global.scaleLabel = function (label) {
     return result;
 };
 
+Chart.defaults.global.multiTooltipTemplate = function (label) {
+    var v = label.value;
+    return label.datasetLabel + ': ' + '$' + numeral(v).format('0,0');
+}; 
 
+Chart.defaults.global.tooltipTemplate = function(value) {
+    if (value.label)  {
+        return value.label + ":" + '$' + numeral(value.value).format('0,0');
+    } else {
+        return value.value;
+    }
+};
 
 // Ionic Starter App
 

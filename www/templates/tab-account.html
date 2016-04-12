@@ -1,7 +1,10 @@
-<ion-view view-title="Alerts">
+<ion-view view-title="Settings">
   <ion-content>
     <ion-list>
-    <ion-toggle  ng-model="settings.enableFriends">
+    <ion-toggle  ng-model="settings.continuousUpdate" ng-change="doStuff()">
+        Continuous Update
+    </ion-toggle>    
+    <ion-toggle  ng-model="settings.enableAlerts">
         Enable Alerts
     </ion-toggle>
     </ion-list>

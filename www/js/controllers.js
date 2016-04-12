@@ -155,5 +155,10 @@ angular.module('starter.controllers', ['starter.services'])
   $scope.settings = {
     enableFriends: false
   };
+
+  $scope.doStuff = function() {
+    console.log('I am here');
+    console.log($scope.settings);
+  }
 })
 ;

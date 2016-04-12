@@ -101,7 +101,7 @@ angular.module('starter.services', ['starter.queries'])
         var scale = chroma.scale(([ '#fee08b', '#e6f598', '#99d594', '#3288bd']))
               .domain(bins);
         var colors = sales.map(function(value) {
-            return scale(value);
+            return chroma(scale(value)).hex();
         });
         result.type = 'bar';
         result.series = ['Product Category'];
