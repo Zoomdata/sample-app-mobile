@@ -1,160 +1,18 @@
-angular.module('starter.queries', [])
-.factory('Rts', function($q, ZDClient) {
-	var o = {
-		prodGroupQuery: {
-			source: 'Real Time Sales',
-			cfg: {
-		       tz: 'EST',
-		       player: {
-		         speed: 1,
-		         pauseAfterRead: true,
-		         timeWindowScale: 'ROLLING'
-		       },
-		       time: {
-		         timeField: '_ts'
-		       },
-		       filters: [],
-		       groups: [{
-		         name: 'group',
-		         limit: 20,
-		         sort: {
-		           dir: 'desc',
-		           name: 'count'
-		         }
-		       }],
-		       metrics: [{
-		         name: 'price',
-		         func: 'sum'
-		        }]
-		    }
-		},
-		prodCatQuery: {
-			source: 'Real Time Sales',
-			cfg: {
-		       tz: 'EST',
-		       player: {
-		         speed: 1,
-		         pauseAfterRead: true,
-		         timeWindowScale: 'ROLLING'
-		       },
-		       time: {
-		         timeField: '_ts'
-		       },
-		       filters: [],
-		       groups: [{
-		         name: 'category',
-		         limit: 10,
-		         sort: {
-	              'name': 'price',
-	              'dir': 'desc',
-	              'metricFunc': 'sum'
-		         }
-		       }],
-		       metrics: [
-		          {
-		            'name': 'price',
-		            'func': 'sum'
-		          }
-		        ]
-		    }			
-		},
-		salesTrendQuery: {
-			source: 'Real Time Sales',
-			cfg: {
-				filters: [],
-				player: {
-		         pauseAfterRead: true,
-		         timeWindowScale: 'ROLLING'
-		       },
-		       time: {
-		         timeField: '_ts'
-		       },
-		       groups: [{
-		         name: '$to_minute(_ts)',
-		         sort: {
-	              'dir': 'asc',
-	              'name': '_ts'
-		         },
-		         'limit': 1000
-		       }],
-		       metrics: [
-		          {
-		            'name': 'price',
-		            'func': 'sum'
-		          },
-		          {
-		            'name': 'plannedsales',
-		            'func': 'sum'
-		          }
-		        ]
-			}
-		},
-		salesDayTrendQuery: {
-			source: 'Real Time Sales',
-			cfg: {
-				filters: [],
-				player: {
-		         pauseAfterRead: true,
-		         timeWindowScale: 'PINNED'
-		       },
-		       time: {
-		       	 from: '+$now_-7_day',
-      			 to: '+$now',
-		         timeField: '_ts'
-		       },
-		       groups: [{
-		         name: '$to_day(_ts)',
-		         sort: {
-	              'dir': 'asc',
-	              'name': '_ts'
-		         },
-		         'limit': 1000
-		       }],
-		       metrics: [
-		          {
-		            'name': 'price',
-		            'func': 'sum'
-		          },
-		          {
-		            'name': 'plannedsales',
-		            'func': 'sum'
-		          }
-		        ]
-			}			
-		}
-	};
-
-	o.genericOldQuery = function(query) {
-	    return function(processData) {
-	    	return $q(function (resolve, reject){
-				ZDClient
-				.then(function(client) {
-				  window.client = client;
-				  return client.createQuery(
-				    {name: query.source},
-				    query.cfg
-				  );
-				})
-				.then( function(result) {
-				    return window.client.runQuery(result, function(queryData) {
-				    	resolve(processData(queryData));
-				    });
-				})
-				.catch( function (error) {
-				      // The client library returns user friendly error messages
-				      console.log( 'Error: ' + error );
-				      reject(error);
-				})
-				;
-	    	});
-	    };
-	}
-
+angular.module('starter.queries', ['starter.config'])
+.factory('Rts', function($q, serverConfig, queryConfig) {
+	var o = {};
+	
 	o.genericQuery = function(query) {
 	    return function(processData) {
 	    	return $q(function (resolve, reject){
 	    		var queryData = [];
-				ZDClient
+				if (!window.ZoomdataSDK) {
+					console.log('ERROR: ZoomdataSDK is not available');
+				} 
+				window.ZoomdataSDK.createClient({
+				  credentials: serverConfig.credentials,
+				  application: serverConfig.application
+				})
 				.then(function(client) {
 				  window.client = client;
 				  return client.createQuery(
@@ -188,10 +46,10 @@ angular.module('starter.queries', [])
 	}
 
 	// currying for different query configurations
-	o.queryProdGroup = o.genericQuery(o.prodGroupQuery);
-	o.queryProdCat = o.genericQuery(o.prodCatQuery);
-	o.querySalesTrend = o.genericQuery(o.salesTrendQuery);
-	o.queryDaySalesTrend = o.genericQuery(o.salesDayTrendQuery);
+	o.queryProdGroup = o.genericQuery(queryConfig.prodGroupQuery);
+	o.queryProdCat = o.genericQuery(queryConfig.prodCatQuery);
+	o.querySalesTrend = o.genericQuery(queryConfig.salesTrendQuery);
+	o.queryDaySalesTrend = o.genericQuery(queryConfig.salesDayTrendQuery);
 
     return o;
 

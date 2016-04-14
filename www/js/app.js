@@ -1,51 +1,4 @@
-function ZDClientFactory($window) {
-  if (!$window.ZoomdataSDK) {
-    console.log('ERROR: ZoomdataSDK is not available');
-  }
 
-  var applicationConfig = {
-    secure: true,   
-    host: 'pubsdk.zoomdata.com',                
-    port: 8443,                 
-    path: '/zoomdata'
-  };
-  var credentialsConfig = {
-      key: "56e966b8e4b03818a87e4547"
-  };
-
-  return $window.ZoomdataSDK.createClient({
-      credentials: credentialsConfig,
-      application: applicationConfig
-  });
-}
-
-// Define dependencies
-ZDClientFactory.$inject = ['$window'];
-
-Chart.defaults.global.scaleLabel = function (label) {
-    var v = label.value;
-    if (v > 999999 ) {
-      result = '$' + numeral(v/1000000).format('0,0') + ' M';
-    } else if (label.value > 999999) {
-      result = '$' + numeral(v/1000).format('0,0') + ' k';
-    } else {
-      result = '$' + numeral(v).format('0,0');
-    }
-    return result;
-};
-
-Chart.defaults.global.multiTooltipTemplate = function (label) {
-    var v = label.value;
-    return label.datasetLabel + ': ' + '$' + numeral(v).format('0,0');
-}; 
-
-Chart.defaults.global.tooltipTemplate = function(value) {
-    if (value.label)  {
-        return value.label + ":" + '$' + numeral(value.value).format('0,0');
-    } else {
-        return value.value;
-    }
-};
 
 // Ionic Starter App
 
@@ -54,10 +7,7 @@ Chart.defaults.global.tooltipTemplate = function(value) {
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'chart.js', 'starter.controllers'])
-
-.factory('ZDClient', ZDClientFactory)
-
+angular.module('starter', ['ionic','chart.js', 'starter.controllers'])
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -73,7 +23,7 @@ angular.module('starter', ['ionic', 'chart.js', 'starter.controllers'])
     }
   });
 })
-
+// .factory('ZDClient', ZDClientFactory)
 .config(function($stateProvider, $urlRouterProvider) {
 
   // Ionic uses AngularUI Router which uses the concept of states
@@ -83,13 +33,24 @@ angular.module('starter', ['ionic', 'chart.js', 'starter.controllers'])
   $stateProvider
 
   // setup an abstract state for the tabs directive
-    .state('tab', {
+  .state('tab', {
     url: '/tab',
     abstract: true,
-    templateUrl: 'templates/tabs.html'
+    templateUrl: 'templates/tabs.html',
+    resolve: {
+        cordova: function($q, $timeout) {
+            var deferred = $q.defer();
+            ionic.Platform.ready(function() {
+                var delay = window.cordova ? 25000 : 1;
+                $timeout(function () {
+                  console.log('ionic.Platform.ready');
+                  deferred.resolve();
+                }, delay);
+            });
+            return deferred.promise;
+        }
+    }
   })
-
-  // Each tab has its own nav history stack:
 
   .state('tab.dash', {
     url: '/dash',
@@ -149,3 +110,29 @@ angular.module('starter', ['ionic', 'chart.js', 'starter.controllers'])
 .constant('moment', window.moment)
 .constant('numeral', window.numeral)
 ;
+
+// Charts.js global defaults
+Chart.defaults.global.scaleLabel = function (label) {
+    var v = label.value;
+    if (v > 999999 ) {
+      result = '$' + numeral(v/1000000).format('0,0') + ' M';
+    } else if (label.value > 999999) {
+      result = '$' + numeral(v/1000).format('0,0') + ' k';
+    } else {
+      result = '$' + numeral(v).format('0,0');
+    }
+    return result;
+};
+
+Chart.defaults.global.multiTooltipTemplate = function (label) {
+    var v = label.value;
+    return label.datasetLabel + ': ' + '$' + numeral(v).format('0,0');
+}; 
+
+Chart.defaults.global.tooltipTemplate = function(value) {
+    if (value.label)  {
+        return value.label + ":" + '$' + numeral(value.value).format('0,0');
+    } else {
+        return value.value;
+    }
+};

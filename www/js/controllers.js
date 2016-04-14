@@ -1,13 +1,21 @@
-angular.module('starter.controllers', ['starter.services'])
+angular.module('starter.controllers', ['starter.services', 'starter.config'])
 
-.controller('DashCtrl', function($scope, Charts) {
-  $scope.dashboards = Charts.allDashboards();
-  $scope.removeDash = function(dash) {
-    Charts.rmDashboards(dash);
-  };
+.controller('DashCtrl', function($scope, $timeout, $ionicLoading, OAuthSupport, Charts) {
+
+  OAuthSupport.authenticate().then(
+    function(result) {
+        $scope.dashboards = Charts.allDashboards();
+        $scope.removeDash = function(dash) {
+          Charts.rmDashboards(dash);
+        };
+    }
+  );
 })
 
-.controller('DashDetailCtrl', function($scope, $timeout, $interval, $stateParams, $q, Charts) {
+.controller('DashDetailCtrl', function($scope, $timeout, $interval, $stateParams, 
+                                       $q, OAuthSupport, Charts) {
+  OAuthSupport.authenticate();
+
   $scope.dash = Charts.getDashboard($stateParams.dashId);
   $scope.playerLabel = 'ion-ios-pause';
   var play;
@@ -19,7 +27,6 @@ angular.module('starter.controllers', ['starter.services'])
   };
 
   var fillDashboard = function() {
-    // console.log('in fillDashboard');
     var barPromise = Charts.fillRTSBar();
     var piePromise = Charts.fillRTSPie();
     var trendPromise = Charts.fillRTSTrend();
@@ -52,7 +59,6 @@ angular.module('starter.controllers', ['starter.services'])
   }
 
   var startPlay = function() {
-    // console.log('in startPlay');
     // Don't start playing if the player is already on
     if ( angular.isDefined(play) ) return;
     firstPlay = true;
@@ -132,7 +138,9 @@ angular.module('starter.controllers', ['starter.services'])
   fillDashboard();
 })
 
-.controller('ChartsCtrl', function($scope, Charts) {
+.controller('ChartsCtrl', function($scope, OAuthSupport, Charts) {
+  OAuthSupport.authenticate();
+
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
@@ -147,11 +155,15 @@ angular.module('starter.controllers', ['starter.services'])
   };
 })
 
-.controller('ChartDetailCtrl', function($scope, $stateParams, Charts) {
+.controller('ChartDetailCtrl', function($scope, $stateParams, OAuthSupport, Charts) {
+  OAuthSupport.authenticate();
+
   $scope.chart = Charts.get($stateParams.chartId);
 })
 
-.controller('AccountCtrl', function($scope) {
+.controller('AccountCtrl', function($scope, OAuthSupport) {
+  OAuthSupport.authenticate();
+
   $scope.settings = {
     enableFriends: false
   };
