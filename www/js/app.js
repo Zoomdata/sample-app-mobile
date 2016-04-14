@@ -41,6 +41,9 @@ angular.module('starter', ['ionic','chart.js', 'starter.controllers'])
         cordova: function($q, $timeout) {
             var deferred = $q.defer();
             ionic.Platform.ready(function() {
+                // need to wait for ionic and cordova to be fully initialized
+                // otherwise, app will not work after coming back from the 
+                // inapp brwoser for OAuth
                 var delay = window.cordova ? 25000 : 1;
                 $timeout(function () {
                   console.log('ionic.Platform.ready');

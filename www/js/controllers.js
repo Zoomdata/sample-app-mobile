@@ -1,15 +1,18 @@
 angular.module('starter.controllers', ['starter.services', 'starter.config'])
 
-.controller('DashCtrl', function($scope, $timeout, $ionicLoading, OAuthSupport, Charts) {
+.controller('DashCtrl', function($scope, serverConfig, OAuthSupport, Charts) {
 
-  OAuthSupport.authenticate().then(
-    function(result) {
-        $scope.dashboards = Charts.allDashboards();
-        $scope.removeDash = function(dash) {
-          Charts.rmDashboards(dash);
-        };
-    }
-  );
+  $scope.$on('$ionicView.enter', function(e) {
+      OAuthSupport.authenticate()
+      .then( function(result) {
+          $scope.dashboards = Charts.allDashboards();
+          $scope.removeDash = function(dash) {
+            Charts.rmDashboards(dash);
+          };
+        }
+      );
+  });
+
 })
 
 .controller('DashDetailCtrl', function($scope, $timeout, $interval, $stateParams, 
@@ -138,7 +141,7 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
   fillDashboard();
 })
 
-.controller('ChartsCtrl', function($scope, OAuthSupport, Charts) {
+.controller('ChartsCtrl', function($scope, serverConfig, OAuthSupport, Charts) {
   OAuthSupport.authenticate();
 
   // With the new view caching in Ionic, Controllers are only called
@@ -146,13 +149,17 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
   // To listen for when this page is active (for example, to refresh data),
   // listen for the $ionicView.enter event:
   //
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+  $scope.$on('$ionicView.enter', function(e) {
+      OAuthSupport.authenticate()
+      .then( function(result) {
+          $scope.charts = Charts.all();
+          $scope.remove = function(chart) {
+            Charts.remove(chart);
+          };
+        }
+      );
+  });
 
-  $scope.charts = Charts.all();
-  $scope.remove = function(chart) {
-    Charts.remove(chart);
-  };
 })
 
 .controller('ChartDetailCtrl', function($scope, $stateParams, OAuthSupport, Charts) {
@@ -165,10 +172,11 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
   OAuthSupport.authenticate();
 
   $scope.settings = {
-    enableFriends: false
+    enableFriends: false,
+    continuousUpdate: true
   };
 
-  $scope.doStuff = function() {
+  $scope.togglePlay = function() {
     console.log('I am here');
     console.log($scope.settings);
   }

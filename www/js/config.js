@@ -151,6 +151,8 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 				ionic.Platform.ready(function(){
 					o.performOAuth(resolve, reject); 
 				});
+			} else {
+				resolve(serverConfig);
 			}
 		});
 	}
