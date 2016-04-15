@@ -1004,6 +1004,7 @@
     'oauth.spotify',
     'oauth.uber',
     'oauth.generic',
+    'oauth.browserOnly',
     'oauth.windowslive',
     'oauth.yammer',
     'oauth.venmo',
@@ -1023,7 +1024,7 @@
     $q, $http, $cordovaOauthUtility, $ngCordovaAzureAD, $ngCordovaAdfs, $ngCordovaDropbox, $ngCordovaDigitalOcean,
     $ngCordovaGoogle, $ngCordovaGithub, $ngCordovaFacebook, $ngCordovaLinkedin, $ngCordovaInstagram, $ngCordovaBox, $ngCordovaReddit, $ngCordovaSlack,
     $ngCordovaTwitter, $ngCordovaMeetup, $ngCordovaSalesforce, $ngCordovaStrava, $ngCordovaWithings, $ngCordovaFoursquare, $ngCordovaMagento,
-    $ngCordovaVkontakte, $ngCordovaOdnoklassniki, $ngCordovaImgur, $ngCordovaSpotify, $ngCordovaUber, $ngCordovaGeneric, $ngCordovaWindowslive, $ngCordovaYammer,
+    $ngCordovaVkontakte, $ngCordovaOdnoklassniki, $ngCordovaImgur, $ngCordovaSpotify, $ngCordovaUber, $ngCordovaGeneric, $ngBrowserOnly, $ngCordovaWindowslive, $ngCordovaYammer,
     $ngCordovaVenmo, $ngCordovaStripe, $ngCordovaRally, $ngCordovaFamilySearch, $ngCordovaEnvato, $ngCordovaWeibo, $ngCordovaJawbone, $ngCordovaUntappd,
     $ngCordovaDribble, $ngCordovaPocket, $ngCordovaMercadolibre) {
 
@@ -1053,6 +1054,7 @@
       spotify: $ngCordovaSpotify.signin,
       uber: $ngCordovaUber.signin,
       generic: $ngCordovaGeneric.signin,
+      browserOnly: $ngBrowserOnly.signin,
       windowsLive: $ngCordovaWindowslive.signin,
       yammer: $ngCordovaYammer.signin,
       venmo: $ngCordovaVenmo.signin,
@@ -1065,7 +1067,7 @@
       untappd: $ngCordovaUntappd.signin,
       dribble: $ngCordovaDribble.signin,
       pocket: $ngCordovaPocket.signin,
-      mercadolibre: $ngCordovaMercadolibre.signin,
+      mercadolibre: $ngCordovaMercadolibre.signin
     };
   }
 
@@ -1096,6 +1098,7 @@
     '$ngCordovaSpotify',
     '$ngCordovaUber',
     '$ngCordovaGeneric',
+    '$ngBrowserOnly',
     '$ngCordovaWindowslive',
     '$ngCordovaYammer',
     '$ngCordovaVenmo',
@@ -2303,6 +2306,68 @@
   generic.$inject = ['$q', '$http', '$cordovaOauthUtility'];
 })();
 
+(function() {
+  'use strict';
+
+  angular.module('oauth.browserOnly', ['oauth.utils'])
+    // .config(['$httpProvider', function($httpProvider) {  
+    //     $httpProvider.interceptors.push('oauthInterceptor');
+    // }])
+    .factory('$ngBrowserOnly', browserOnly)
+    // .factory('oauthInterceptor', oauthInterceptor)
+    ;
+
+  function browserOnly($q, $http, $location) {
+    return { signin: oauthBrowserOnly };
+
+      /*
+       * Sign into the ZD generic service using standard browser
+       *
+       * @param    string clientId
+       * @param    appScope array
+       * @param    object options
+       * @return   promise
+       */
+      function oauthBrowserOnly(clientId, authUri, appScope, options) {
+        var deferred = $q.defer();
+
+        start(clientId, authUri, appScope, options);
+
+        return deferred.promise;
+      }
+
+      function start(clientId, authUri, appScope, options) {
+        var redirect_uri = options.redirect_uri;
+        var endpoint = authUri + '?client_id=' + clientId + '&redirect_uri=' + redirect_uri + '&response_type=token&scope=' + appScope.join(" ");
+        // it could also broadcast the event if needed: $rootScope.$broadcast('oauth:logging-in');
+        window.location.replace(endpoint); 
+      }
+
+      function finish(deferred) {
+        if($location.path().indexOf('#access_token') !== -1) {
+          var callbackResponse = ($location.path()).split("#")[1];
+          var responseParameters = (callbackResponse).split("&");
+          var parameterMap = [];
+          for(var i = 0; i < responseParameters.length; i++) {
+            parameterMap[responseParameters[i].split("=")[0]] = responseParameters[i].split("=")[1];
+          }
+          if(parameterMap.access_token !== undefined && parameterMap.access_token !== null) {
+            deferred.resolve({ access_token: parameterMap.access_token, 
+                              token_type: parameterMap.token_type, 
+                              expires_in: parameterMap.expires_in, 
+                              scope: parameterMap.scope });
+          } else {
+            deferred.reject("Problem authenticating");
+          }
+        } else {
+          console.log('not yet');
+        }
+      }
+
+  }
+
+  browserOnly.$inject = ['$q', '$http', '$location'];
+})();
 
 (function() {
   'use strict';
@@ -2856,6 +2921,7 @@
  *    Spotify
  *    Uber
  *    ZD Generic
+ *    ZD Browser Only
  *    Windows Live Connect
  *    Yammer
  *    Venmo

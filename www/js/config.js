@@ -1,4 +1,9 @@
 angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
+.constant('redirect', {
+	cordova_uri: "http://localhost/callback",
+	browser_uri: "http://localhost:8100/%23/tab/dash"
+	// browser_uri: "http://192.168.1.125:8100/%23/tab/dash"
+})
 .constant('serverConfig', {
       credentials: {
           access_token: ''
@@ -10,7 +15,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
           path: '/zoomdata'
       },
       oauthOptions: {
-          client_id: "emQtbW9iaWxlLWFwcC0wMi1jbGllbnQxNDYwNDg0NjUwNDE1YjI5MDk5ODQtN2Y0YS00MzQ1LWJiMjItZGEwN2I3NTNjMmU3",
+          client_id: "emQtbW9iaWxlLWFwcC0wMi1jbGllbnQxNDYwNzI1MDg4NzM5MzU4MTRiYjItMzY4YS00YWQwLTlkNWMtMGU5OTNiYTcyZWEz",
           redirect_uri: "http://localhost/callback",
           auth_uri: "https://pubsdk.zoomdata.com:8443/zoomdata/oauth/authorize",
           scope: ['read']
@@ -139,7 +144,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 			}			
 		}
 })
-.factory('OAuthSupport', function($q, $cordovaOauth, serverConfig) {
+.factory('OAuthSupport', function($q, $cordovaOauth, serverConfig, redirect) {
 	var o = {};
 	o.authenticate = function() {
 		return $q(function (resolve, reject){
@@ -157,8 +162,14 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		});
 	}
 
+	o.oauthAuthenticate = window.cordova === undefined ? 
+						$cordovaOauth.browserOnly : $cordovaOauth.generic;
+
+	serverConfig.oauthOptions.redirect_uri = window.cordova === undefined ? 
+						redirect.browser_uri : redirect.cordova_uri;
+
 	o.performOAuth = function(resolve, reject) {
-		$cordovaOauth.generic(
+		o.oauthAuthenticate(
 		  serverConfig.oauthOptions.client_id, 
 		  serverConfig.oauthOptions.auth_uri,
 		  serverConfig.oauthOptions.scope,
@@ -176,4 +187,60 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 
     return o;
   }
-);	
+)
+.factory('OAuthFinish', function($location, serverConfig) {
+	var o = {};
+
+	o.checkToken = function() {
+        if($location.path().indexOf('#access_token') !== -1) {
+        	return o.extractHashToken();
+        } else if($location.path().indexOf('&access_token') !== -1) {
+        	return o.extractAmpToken();
+        }
+	}
+
+	o.extractHashToken = function() {
+	      var callbackResponse = ($location.path()).split("#")[1];
+	      var responseParameters = (callbackResponse).split("&");
+	      var parameterMap = [];
+	      var authResult = null;
+	      for(var i = 0; i < responseParameters.length; i++) {
+	        parameterMap[responseParameters[i].split("=")[0]] = responseParameters[i].split("=")[1];
+	      }
+	      if(parameterMap.access_token !== undefined && parameterMap.access_token !== null) {
+	        authResult = { access_token: parameterMap.access_token, 
+	                          token_type: parameterMap.token_type, 
+	                          expires_in: parameterMap.expires_in, 
+	                          scope: parameterMap.scope };
+	        serverConfig.credentials.access_token = authResult.access_token;
+	      } else {
+	        console.log("Problem authenticating");
+	      }
+
+	      return authResult;
+	}
+
+	o.extractAmpToken = function() {
+          var responseParameters = ($location.path()).split("&");
+          var parameterMap = [];
+          var authResult = null;
+          for(var i = 0; i < responseParameters.length; i++) {
+            parameterMap[responseParameters[i].split("=")[0]] = responseParameters[i].split("=")[1];
+          }
+          if(parameterMap.access_token !== undefined && parameterMap.access_token !== null) {
+            authResult = { access_token: parameterMap.access_token, 
+                              token_type: parameterMap.token_type, 
+                              expires_in: parameterMap.expires_in, 
+                              scope: parameterMap.scope };
+            serverConfig.credentials.access_token = authResult.access_token;
+          } else {
+            console.log("Problem authenticating");
+          }
+
+          return authResult;
+	}
+
+    return o;
+  }
+)
+;	

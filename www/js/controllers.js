@@ -1,7 +1,6 @@
 angular.module('starter.controllers', ['starter.services', 'starter.config'])
 
 .controller('DashCtrl', function($scope, serverConfig, OAuthSupport, Charts) {
-
   $scope.$on('$ionicView.enter', function(e) {
       OAuthSupport.authenticate()
       .then( function(result) {
@@ -142,8 +141,6 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
 })
 
 .controller('ChartsCtrl', function($scope, serverConfig, OAuthSupport, Charts) {
-  OAuthSupport.authenticate();
-
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
