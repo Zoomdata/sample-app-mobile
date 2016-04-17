@@ -113,6 +113,7 @@ angular.module('starter', ['ionic','chart.js', 'starter.controllers', 'starter.c
 .constant('chroma', window.chroma)
 .constant('moment', window.moment)
 .constant('numeral', window.numeral)
+.constant('production', true)
 ;
 
 // Charts.js global defaults

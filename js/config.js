@@ -1,8 +1,8 @@
 angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 .constant('redirect', {
 	cordova_uri: "http://localhost/callback",
-	browser_uri: "http://localhost:8100/%23/tab/dash"
-	// browser_uri: "http://192.168.1.125:8100/%23/tab/dash"
+	browser_dev_uri: "http://localhost:8100/%23/tab/dash",
+	browser_prod_uri: "http://demos.zoomdata.com/zd-mobile-app-02/%23/tab/dash"
 })
 .constant('serverConfig', {
       credentials: {
@@ -15,7 +15,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
           path: '/zoomdata'
       },
       oauthOptions: {
-          client_id: "emQtbW9iaWxlLWFwcC0wMi1jbGllbnQxNDYwNzI1MDg4NzM5MzU4MTRiYjItMzY4YS00YWQwLTlkNWMtMGU5OTNiYTcyZWEz",
+          client_id: "emQtbW9iaWxlLWFwcC0wMi1jbGllbnQxNDYwOTI4OTA5ODkxNmU5MmM5MGYtZGU3Ny00OTI2LTk4NzUtYjMzNjRhNzliZGMw",
           redirect_uri: "",
           auth_uri: "https://pubsdk.zoomdata.com:8443/zoomdata/oauth/authorize",
           scope: ['read']
@@ -144,7 +144,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 			}			
 		}
 })
-.factory('OAuthSupport', function($q, $cordovaOauth, serverConfig, redirect) {
+.factory('OAuthSupport', function($q, $cordovaOauth, serverConfig, redirect, production) {
 	var o = {};
 	o.authenticate = function() {
 		return $q(function (resolve, reject){
@@ -158,11 +158,22 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		});
 	}
 
+	o.obtainRedirect = function() {
+		console.log('prod is ' + production);
+		var result;
+		if (window.cordova === undefined ) {
+			result = production ? redirect.browser_prod_uri : redirect.browser_dev_uri ;
+		} else {
+			result = redirect.cordova_uri;
+		}
+
+		return result;
+	}
+
 	o.oauthAuthenticate = window.cordova === undefined ? 
 						$cordovaOauth.browserOnly : $cordovaOauth.generic;
 
-	serverConfig.oauthOptions.redirect_uri = window.cordova === undefined ? 
-						redirect.browser_uri : redirect.cordova_uri;
+	serverConfig.oauthOptions.redirect_uri = o.obtainRedirect();
 
 	o.performOAuth = function(resolve, reject) {
 		o.oauthAuthenticate(
