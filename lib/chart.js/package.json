@@ -1,0 +1,95 @@
+{
+  "_args": [
+    [
+      "chart.js",
+      "/Users/jorgealarcon/projects/zd-mobile-app-02"
+    ]
+  ],
+  "_from": "chart.js@latest",
+  "_id": "chart.js@1.1.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/chart.js",
+  "_nodeVersion": "5.6.0",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/chart.js-1.1.0.tgz_1459526924335_0.7063350817188621"
+  },
+  "_npmUser": {
+    "email": "hello@nickdownie.com",
+    "name": "nnnick"
+  },
+  "_npmVersion": "3.7.3",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "chart.js",
+    "raw": "chart.js",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/chart.js/-/chart.js-1.1.0.tgz",
+  "_shasum": "50a868dba9a07c69e40b1c4b29d2948627a6140d",
+  "_shrinkwrap": null,
+  "_spec": "chart.js",
+  "_where": "/Users/jorgealarcon/projects/zd-mobile-app-02",
+  "bugs": {
+    "url": "https://github.com/nnnick/Chart.js/issues"
+  },
+  "dependences": {},
+  "dependencies": {},
+  "description": "Simple HTML5 charts using the canvas element.",
+  "devDependencies": {
+    "gulp": "3.9.x",
+    "gulp-concat": "~2.1.x",
+    "gulp-connect": "~2.0.5",
+    "gulp-html-validator": "^0.0.2",
+    "gulp-jshint": "~1.5.1",
+    "gulp-livereload": "^3.8.0",
+    "gulp-replace": "^0.4.0",
+    "gulp-size": "~0.4.0",
+    "gulp-uglify": "~1.5.x",
+    "gulp-util": "~2.2.x",
+    "inquirer": "^0.5.1",
+    "semver": "^3.0.1"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "50a868dba9a07c69e40b1c4b29d2948627a6140d",
+    "tarball": "https://registry.npmjs.org/chart.js/-/chart.js-1.1.0.tgz"
+  },
+  "gitHead": "ef923dfe289fc41326be58f3f6e4d991c8eb741f",
+  "homepage": "http://www.chartjs.org",
+  "license": "MIT",
+  "main": "Chart.js",
+  "maintainers": [
+    {
+      "email": "evert.timberg+npm@gmail.com",
+      "name": "etimberg"
+    },
+    {
+      "email": "hello@nickdownie.com",
+      "name": "nnnick"
+    },
+    {
+      "email": "tannerlinsley@gmail.com",
+      "name": "tannerlinsley"
+    }
+  ],
+  "name": "chart.js",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nnnick/Chart.js.git"
+  },
+  "scripts": {},
+  "spm": {
+    "main": "Chart.js"
+  },
+  "version": "1.1.0"
+}

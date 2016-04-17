@@ -1,0 +1,58 @@
+<ion-view view-title="{{dash.name}}">
+  <ion-content class="padding">
+    <img ng-src="{{dash.face}}" style="width: 64px; height: 64px">
+    <p>
+      {{dash.lastText}}
+    </p>
+
+	<div class="card">
+		<div class="item item-divider">
+		    Actual vs. Planned Sales - Rolling 7 Days
+		</div>
+		<div class="item item-text-wrap">
+			<canvas id="line" class="chart chart-line" chart-data="trendDayCfg.data"
+			  chart-labels="trendDayCfg.labels" chart-legend="false" chart-series="trendDayCfg.series"
+			  chart-options="{pointDot : false}" chart-colours="trendDayCfg.fillColor" 
+			  chart-click="onClick" >
+			</canvas> 
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="item item-divider">
+		    Actual vs. Planned Sales - Rolling Hour
+		</div>
+		<div class="item item-text-wrap">
+			<canvas id="line" class="chart chart-line" chart-data="trendCfg.data"
+			  chart-labels="trendCfg.labels" chart-legend="false" chart-series="trendCfg.series"
+			  chart-options="{pointDot : false}" chart-colours="trendCfg.fillColor" 
+			  chart-click="onClick" >
+			</canvas> 
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="item item-divider">
+		    Sales by Product Category - Rolling Hour
+		</div>
+		<div class="item item-text-wrap">
+		    <canvas id="bar" class="chart chart-bar" chart-data="barCfg.data" chart-labels="barCfg.labels" chart-legend="false" chart-series="barCfg.series" chart-options="{showTooltips: true}" chart-colours="barCfg.fillColor" >
+		    </canvas>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="item item-divider">
+		    Product Group Transactions - Rolling Hour
+		</div>
+		<div class="item item-text-wrap">
+		    <canvas id="pie" class="chart chart-pie" chart-data="pieCfg.data" chart-labels="pieCfg.labels" chart-legend="false" chart-options="{showTooltips: true}">
+		    </canvas>
+		</div>
+	</div>
+
+	<button class="button button-positive {{playerLabel}}" data-ng-click="togglePlay()">
+	</button>
+
+  </ion-content>
+</ion-view>
