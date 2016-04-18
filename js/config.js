@@ -166,7 +166,6 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		} else {
 			result = redirect.cordova_uri;
 		}
-		debugger;
 		return result;
 	}
 
