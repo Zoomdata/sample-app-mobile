@@ -1,5 +1,5 @@
 angular.module('starter.services', ['starter.queries'])
-.factory('Charts', function(Rts) {
+.factory('Charts', function(ZDAccess) {
 
   var o = {
     charts: [{
@@ -72,7 +72,7 @@ angular.module('starter.services', ['starter.queries'])
         return result;
       };
 
-      return Rts.queryProdGroup(processData);
+      return ZDAccess.queryProdGroup(processData);
   }
 
   var truncate = function( string, n ){
@@ -115,7 +115,7 @@ angular.module('starter.services', ['starter.queries'])
         return result;
       };
 
-      return Rts.queryProdCat(processData);
+      return ZDAccess.queryProdCat(processData);
   }
 
   o.fillRTSTrend = function() {
@@ -142,7 +142,7 @@ angular.module('starter.services', ['starter.queries'])
         return result;
       }
 
-      return Rts.querySalesTrend(processData);
+      return ZDAccess.querySalesTrend(processData);
   }
 
     o.fillRTSDayTrend = function() {
@@ -170,7 +170,7 @@ angular.module('starter.services', ['starter.queries'])
         return result;
       }
 
-      return Rts.queryDaySalesTrend(processData);
+      return ZDAccess.queryDaySalesTrend(processData);
   }
 
   o.all = function() {
@@ -205,6 +205,10 @@ angular.module('starter.services', ['starter.queries'])
       }
     }
     return null;
+  }
+
+  o.logout = function() {
+    return ZDAccess.logout();
   }
 
   return o;

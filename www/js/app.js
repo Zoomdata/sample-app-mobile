@@ -1,12 +1,3 @@
-
-
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.services' is found in services.js
-// 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic','chart.js', 'starter.controllers', 'starter.config'])
 .run(function($ionicPlatform, OAuthFinish) {
   OAuthFinish.checkToken();
@@ -24,7 +15,6 @@ angular.module('starter', ['ionic','chart.js', 'starter.controllers', 'starter.c
     }
   });
 })
-// .factory('ZDClient', ZDClientFactory)
 .config(function($stateProvider, $urlRouterProvider) {
 
   // Ionic uses AngularUI Router which uses the concept of states
@@ -104,7 +94,17 @@ angular.module('starter', ['ionic','chart.js', 'starter.controllers', 'starter.c
         controller: 'AccountCtrl'
       }
     }
-  });
+  })
+
+  .state('tab.signout', {
+    url: '/signout',
+    views: {
+      'tab-signout': {
+        templateUrl: 'templates/tab-signout.html',
+        controller: 'SignoutCtrl'
+      }
+    }
+  })
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/tab/dash');
@@ -113,6 +113,7 @@ angular.module('starter', ['ionic','chart.js', 'starter.controllers', 'starter.c
 .constant('chroma', window.chroma)
 .constant('moment', window.moment)
 .constant('numeral', window.numeral)
+.constant('production', false)
 ;
 
 // Charts.js global defaults
