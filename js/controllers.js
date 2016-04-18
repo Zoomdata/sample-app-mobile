@@ -15,13 +15,11 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
 })
 
 .controller('DashDetailCtrl', function($scope, $timeout, $interval, $stateParams, 
-                                       $q, OAuthSupport, Charts) {
+                                       $q, OAuthSupport, Charts, settings) {
   OAuthSupport.authenticate();
 
   $scope.dash = Charts.getDashboard($stateParams.dashId);
-  $scope.playerLabel = 'ion-ios-pause';
   var play;
-  var firstPlay = false;
 
   $scope.onClick = function (points, evt) {
     // test to capture onClick event for trends.  See templates/dash-detail.html
@@ -49,13 +47,23 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
               $scope.pieCfg = angular.copy(data[1]); 
             }, 2600)
         )
-        .then( startPlay() );
+        .then( 
+          togglePlay()
+        );
       }, function(reason) {
         console.log('Failed: ' + reason);
       }
     );
   }
       
+  var togglePlay = function() {
+    if (settings.continuousUpdate) {
+      startPlay();
+    } else {
+      stopPlay();
+    }
+  }
+
   var delayed = function( myFunction, delay ) {
     return $timeout( myFunction, delay);    
   }
@@ -63,8 +71,6 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
   var startPlay = function() {
     // Don't start playing if the player is already on
     if ( angular.isDefined(play) ) return;
-    firstPlay = true;
-    $scope.playerLabel = 'ion-ios-pause';
     play = $interval( function() {
       var barPromise = Charts.fillRTSBar();
       var piePromise = Charts.fillRTSPie();
@@ -99,43 +105,24 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
         }
       );
 
-    }, 4000);
+    }, 6000);
   }
 
   var stopPlay = function() {
     if (angular.isDefined(play)) {
       $interval.cancel(play);
       play = undefined;
-      $scope.playerLabel = 'ion-ios-play';
     }
   };
 
-  $scope.togglePlay = function() {
-    if (!firstPlay) {
-      return;
-    }
-    if (!play) {
-      startPlay();
-    } else {
-      stopPlay();
-    }
-  }
+  $scope.$on("continuousUpdateChanged", function (event, args) {
+    togglePlay();
+  });
 
   $scope.$on('$destroy', function() {
     // Ensures the interval is destroyed too
     stopPlay();
   });
-
-  function randomizeArray(series) {
-    var newSeries = series.map(function(item) {
-      return randomIntFromInterval(50, 100);
-    });
-    return newSeries;
-  }
-
-  function randomIntFromInterval(min,max) {
-      return Math.floor(Math.random()*(max-min+1)+min);
-  }
 
   fillDashboard();
 })
@@ -165,16 +152,15 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
   $scope.chart = Charts.get($stateParams.chartId);
 })
 
-.controller('AccountCtrl', function($scope, OAuthSupport) {
+.controller('AccountCtrl', function($rootScope, $scope, OAuthSupport, settings) {
   OAuthSupport.authenticate();
 
-  $scope.settings = {
-    enableFriends: false,
-    continuousUpdate: true
-  };
+  // $scope.settings is updated by UI events and it is assigned to settings
+  // settings is the model defined in config.js
+  $scope.settings = settings;
 
-  $scope.togglePlay = function() {
-    console.log($scope.settings);
+  $scope.continuousUpdateChanged = function() {
+    $rootScope.$broadcast("continuousUpdateChanged");
   }
 })
 

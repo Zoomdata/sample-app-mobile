@@ -144,6 +144,10 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 			}			
 		}
 })
+.constant('settings', {
+		enableAlerts: false, 
+		continuousUpdate: true
+})
 .factory('OAuthSupport', function($q, $cordovaOauth, serverConfig, redirect, production) {
 	var o = {};
 	o.authenticate = function() {

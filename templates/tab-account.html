@@ -1,7 +1,7 @@
 <ion-view view-title="Settings">
   <ion-content>
     <ion-list>
-    <ion-toggle  ng-model="settings.continuousUpdate" ng-change="togglePlay()">
+    <ion-toggle  ng-model="settings.continuousUpdate" ng-change="continuousUpdateChanged()">
         Continuous Update
     </ion-toggle>    
     <ion-toggle  ng-model="settings.enableAlerts">
