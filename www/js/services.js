@@ -1,5 +1,5 @@
 angular.module('starter.services', ['starter.queries'])
-.factory('Charts', function(ZDAccess) {
+.factory('Charts', function($state, ZDAccess) {
 
   var o = {
     charts: [{
@@ -208,7 +208,13 @@ angular.module('starter.services', ['starter.queries'])
   }
 
   o.logout = function() {
-    return ZDAccess.logout();
+    // return ZDAccess.logout();
+    ZDAccess.logout().then(function(response) {
+        console.log(response);
+      }
+    ).finally(function() {
+      $state.go('tab.dash');
+    });
   }
 
   return o;
