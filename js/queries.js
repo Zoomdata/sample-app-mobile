@@ -48,8 +48,20 @@ angular.module('starter.queries', ['starter.config'])
 	o.querySalesTrend = o.genericQuery(queryConfig.salesTrendQuery);
 	o.queryDaySalesTrend = o.genericQuery(queryConfig.salesDayTrendQuery);
 
+	var buildEndpoint = function(service) {
+		var protocol = serverConfig.application.secure ? 'https' : 'http';
+		var hostname = serverConfig.application.host;
+		var port = serverConfig.application.port;
+		var path = serverConfig.application.path;
+		var endpoint = protocol + '://' + hostname + ":" + port + path + service;
+
+		return endpoint;
+	}
+
 	o.logout = function() {
-		return $http.post('https://pubsdk.zoomdata.com:8443/zoomdata/logout');
+		// forget the current token
+		serverConfig.credentials.access_token = '';
+		return $http.post(buildEndpoint('/logout'));
 	}
 
     return o;

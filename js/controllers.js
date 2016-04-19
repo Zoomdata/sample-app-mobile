@@ -14,46 +14,56 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
 
 })
 
-.controller('DashDetailCtrl', function($scope, $timeout, $interval, $stateParams, 
-                                       $q, OAuthSupport, Charts, settings) {
-  OAuthSupport.authenticate();
-
-  $scope.dash = Charts.getDashboard($stateParams.dashId);
+.controller('DashDetailCtrl', function($scope, $state, $timeout, $interval, $stateParams, 
+                                       $q, OAuthSupport, Charts, settings, visuals) {
   var play;
 
-  $scope.onClick = function (points, evt) {
-    // test to capture onClick event for trends.  See templates/dash-detail.html
-    console.log(points, evt);
-  };
-
   var fillDashboard = function() {
+    $scope.visuals = visuals;
     var barPromise = Charts.fillRTSBar();
     var piePromise = Charts.fillRTSPie();
     var trendPromise = Charts.fillRTSTrend();
     var trendDayPromise = Charts.fillRTSDayTrend();
     $q.all([barPromise, piePromise, trendPromise, trendDayPromise]).then(function(data) {
-        $scope.trendDayCfg = angular.copy(data[3]);
+        visuals[2].config = angular.copy(data[2]);
         // workaround as charts.js cannot render more than one chart update at the same time
         delayed( function() {
-          $scope.trendCfg = angular.copy(data[2]);
+          visuals[3].config = angular.copy(data[3]);
         }, 900)
         .then( 
             delayed(function() {
-              $scope.barCfg = angular.copy(data[0]);
+              visuals[0].config = angular.copy(data[0]);
             }, 2000)
         )
         .then(
             delayed( function() {
-              $scope.pieCfg = angular.copy(data[1]); 
+              visuals[1].config = angular.copy(data[1]); 
             }, 2600)
         )
         .then( 
           togglePlay()
         );
       }, function(reason) {
-        console.log('Failed: ' + reason);
+        checkFailReason(reason);
       }
     );
+  }
+
+  var checkFailReason = function(reason) {
+    console.log('Failed: ' + reason);
+    var reauth = false;
+    if (reason.type === 'error') {
+      reauth = true;
+    } else if (reason.responseText !== undefined) {
+      var responseText = reason.responseText;
+      if (responseText.includes('authentication') || 
+          responseText.includes('login')) {
+        reauth = true;
+      }
+    }
+    if (reauth) {
+      Charts.logout();      
+    }
   }
       
   var togglePlay = function() {
@@ -78,30 +88,30 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
       var trendDayPromise = Charts.fillRTSDayTrend();
       $q.all([barPromise, piePromise, trendPromise, trendDayPromise]).then(function(newData) {
           delayed( function() {
-            $scope.barCfg.data = newData[0].data;
-            $scope.barCfg.labels = newData[0].labels;
+            visuals[0].config.data = newData[0].data;
+            visuals[0].config.labels = newData[0].labels;
           }, 900)
           .then(
             delayed( function() {
-              $scope.pieCfg.data = newData[1].data;
-              $scope.pieCfg.labels = newData[1].labels;
+              visuals[1].config.data = newData[1].data;
+              visuals[1].config.labels = newData[1].labels;
             }, 1600)
           )
           .then(
             delayed( function() {
-              $scope.trendCfg.data = newData[2].data;
-              $scope.trendCfg.labels = newData[2].labels;
+              visuals[2].config.data = newData[2].data;
+              visuals[2].config.labels = newData[2].labels;
             }, 1600)
           )
           .then(
             delayed( function() {
-              $scope.trendDayCfg.data = newData[3].data;
-              $scope.trendDayCfg.labels = newData[3].labels;
+              visuals[3].config.data = newData[3].data;
+              visuals[3].config.labels = newData[3].labels;
             }, 1600)
           )
 
         }, function(reason) {
-          console.log('Failed: ' + reason);
+          checkFailReason(reason);
         }
       );
 
@@ -124,7 +134,25 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
     stopPlay();
   });
 
+  $scope.dash = Charts.getDashboard($stateParams.dashId);
+
+  $scope.onClick = function (points, evt) {
+    // test to capture onClick event for trends.  See templates/dash-detail.html
+    console.log(points, evt);
+  };
+
+  $scope.$on('$ionicView.enter', function(e) {
+      OAuthSupport.authenticate();
+  });
+
   fillDashboard();
+})
+
+.controller('DashChartDetailCtrl', function($scope, $stateParams, OAuthSupport, visuals) {
+  OAuthSupport.authenticate();
+  $scope.chart = visuals[$stateParams.chartId];
+
+
 })
 
 .controller('ChartsCtrl', function($scope, serverConfig, OAuthSupport, Charts) {
@@ -164,16 +192,8 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
   }
 })
 
-.controller('SignoutCtrl', function($scope, serverConfig, OAuthSupport, Charts) {
-  serverConfig.credentials.access_token = '';
-  Charts.logout().then(function(response) {
-        console.log('in logout');
-        cnsole.log(response);
-        OAuthSupport.authenticate();
-    }
-  );
-
-
+.controller('SignoutCtrl', function($state, serverConfig, OAuthSupport, Charts) {
+  Charts.logout();
 })
 
 ;

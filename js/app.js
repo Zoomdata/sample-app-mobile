@@ -66,6 +66,36 @@ angular.module('starter', ['ionic','chart.js', 'starter.controllers', 'starter.c
     }
   })
 
+  .state('tab.dash-line', {
+    url: '/dash/line/:chartId',
+    views: {
+      'tab-dash': {
+        templateUrl: 'templates/dash-line.html',
+        controller: 'DashChartDetailCtrl'
+      }
+    }
+  })
+
+  .state('tab.dash-bar', {
+    url: '/dash/bar/:chartId',
+    views: {
+      'tab-dash': {
+        templateUrl: 'templates/dash-bar.html',
+        controller: 'DashChartDetailCtrl'
+      }
+    }
+  })
+
+  .state('tab.dash-pie', {
+    url: '/dash/pie/:chartId',
+    views: {
+      'tab-dash': {
+        templateUrl: 'templates/dash-pie.html',
+        controller: 'DashChartDetailCtrl'
+      }
+    }
+  })
+
   .state('tab.charts', {
       url: '/charts',
       views: {

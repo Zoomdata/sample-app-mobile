@@ -148,6 +148,30 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		enableAlerts: false, 
 		continuousUpdate: true
 })
+.constant('visuals', [
+
+	{
+		title: 'Sales by Category - Rolling Hour',
+		type: 'bar',
+		config: null
+	},
+	{
+		title: 'Transactions by Group - Rolling Hour',
+		type: 'pie',
+		config: null
+	},
+	{
+		title: 'Actual vs. Planned - Rolling Hour',
+		type: 'line',
+		config: null
+	},
+	{
+		title: 'Actual vs. Planned - Rolling 7 Days',
+		type: 'line',
+		config: null
+	}
+	])
+
 .factory('OAuthSupport', function($q, $cordovaOauth, serverConfig, redirect, production) {
 	var o = {};
 	o.authenticate = function() {

@@ -6,47 +6,62 @@
     </p>
 
 	<div class="card">
-		<div class="item item-divider">
-		    Actual vs. Planned Sales - Rolling 7 Days
+		<div class="item item-divider item-icon-right">{{visuals[2].title}}
+			<a class="item-icon-right" href="#/tab/dash/line/2">
+				<i class="icon ion-ios-arrow-forward"></i>
+			</a>
 		</div>
 		<div class="item item-text-wrap">
-			<canvas id="line" class="chart chart-line" chart-data="trendDayCfg.data"
-			  chart-labels="trendDayCfg.labels" chart-legend="false" chart-series="trendDayCfg.series"
-			  chart-options="{pointDot : false}" chart-colours="trendDayCfg.fillColor" 
+			<canvas id="line" class="chart chart-line" chart-data="visuals[2].config.data"
+			  chart-labels="visuals[2].config.labels" chart-legend="false" 
+			  chart-series="visuals[2].config.series"
+			  chart-options="{pointDot : false}" chart-colours="visuals[2].config.fillColor" 
 			  chart-click="onClick" >
 			</canvas> 
 		</div>
 	</div>
 
 	<div class="card">
-		<div class="item item-divider">
-		    Actual vs. Planned Sales - Rolling Hour
+		<div class="item item-divider">{{visuals[3].title}}
+			<a class="item-icon-right" href="#/tab/dash/line/3">
+				<i class="icon ion-ios-arrow-forward"></i>
+			</a>
 		</div>
 		<div class="item item-text-wrap">
-			<canvas id="line" class="chart chart-line" chart-data="trendCfg.data"
-			  chart-labels="trendCfg.labels" chart-legend="false" chart-series="trendCfg.series"
-			  chart-options="{pointDot : false}" chart-colours="trendCfg.fillColor" 
+			<canvas id="line" class="chart chart-line" chart-data="visuals[3].config.data"
+			  chart-labels="visuals[3].config.labels" chart-legend="false" 
+			  chart-series="visuals[3].config.series"
+			  chart-options="{pointDot : false}" chart-colours="visuals[3].config.fillColor" 
 			  chart-click="onClick" >
 			</canvas> 
 		</div>
 	</div>
 
 	<div class="card">
-		<div class="item item-divider">
-		    Sales by Product Category - Rolling Hour
+		<div class="item item-divider">{{visuals[0].title}}
+			<a class="item-icon-right" href="#/tab/dash/bar/0">
+				<i class="icon ion-ios-arrow-forward"></i>
+			</a>
 		</div>
 		<div class="item item-text-wrap">
-		    <canvas id="bar" class="chart chart-bar" chart-data="barCfg.data" chart-labels="barCfg.labels" chart-legend="false" chart-series="barCfg.series" chart-options="{showTooltips: true}" chart-colours="barCfg.fillColor" >
+		    <canvas id="bar" class="chart chart-bar" chart-data="visuals[0].config.data" 
+		    chart-labels="visuals[0].config.labels" chart-legend="false" 
+		    chart-series="visuals[0].config.series" chart-options="{showTooltips: true}" 
+		    chart-colours="visuals[0].config.fillColor" >
 		    </canvas>
 		</div>
 	</div>
 
 	<div class="card">
-		<div class="item item-divider">
-		    Product Group Transactions - Rolling Hour
+		<div class="item item-divider">{{visuals[1].title}}
+			<a class="item-icon-right" href="#/tab/dash/pie/1">
+				<i class="icon ion-ios-arrow-forward"></i>
+			</a>
 		</div>
 		<div class="item item-text-wrap">
-		    <canvas id="pie" class="chart chart-pie" chart-data="pieCfg.data" chart-labels="pieCfg.labels" chart-legend="false" chart-options="{showTooltips: true}">
+		    <canvas id="pie" class="chart chart-pie" chart-data="visuals[1].config.data" 
+		    chart-labels="visuals[1].config.labels" chart-legend="false" 
+		    chart-options="{showTooltips: true}">
 		    </canvas>
 		</div>
 	</div>
