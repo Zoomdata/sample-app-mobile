@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['starter.services', 'starter.config'])
+angular.module('starter.controllers', ['starter.services', 'starter.config', 'angular-echarts'])
 
 .controller('DashCtrl', function($scope, serverConfig, OAuthSupport, Charts) {
   $scope.$on('$ionicView.enter', function(e) {
@@ -14,8 +14,8 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
 
 })
 
-.controller('DashDetailCtrl', function($scope, $state, $timeout, $interval, $stateParams, 
-                                       $q, OAuthSupport, Charts, settings, visuals) {
+.controller('DashDetailCtrl', function($window, $scope, $state, $timeout, $interval, $stateParams, 
+                                       $q, OAuthSupport, Charts, settings, visuals, windowSize) {
   var play;
 
   var fillDashboard = function() {
@@ -24,12 +24,19 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
     var piePromise = Charts.fillRTSPie();
     var trendPromise = Charts.fillRTSTrend();
     var trendDayPromise = Charts.fillRTSDayTrend();
-    $q.all([barPromise, piePromise, trendPromise, trendDayPromise]).then(function(data) {
-        visuals[2].config = angular.copy(data[2]);
+    var sentimentPromise = Charts.fillSentimentBars();
+    $q.all([barPromise, piePromise, trendPromise, trendDayPromise, sentimentPromise])
+    .then(function(data) {
+        visuals[4].config = angular.copy(data[4]);
         // workaround as charts.js cannot render more than one chart update at the same time
         delayed( function() {
-          visuals[3].config = angular.copy(data[3]);
-        }, 900)
+          visuals[2].config = angular.copy(data[2]);
+        }, 1600)
+        .then(
+          delayed( function() {
+            visuals[3].config = angular.copy(data[3]);
+          }, 900)
+        )
         .then( 
             delayed(function() {
               visuals[0].config = angular.copy(data[0]);
@@ -52,7 +59,9 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
   var checkFailReason = function(reason) {
     console.log('Failed: ' + reason);
     var reauth = false;
-    if (reason.type === 'error') {
+    if ((reason + '').includes('Internal XMLHttpRequest Error')) {
+      reauth = true;
+    } else if (reason.type === 'error') {
       reauth = true;
     } else if (reason.responseText !== undefined) {
       var responseText = reason.responseText;
@@ -86,7 +95,9 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
       var piePromise = Charts.fillRTSPie();
       var trendPromise = Charts.fillRTSTrend();
       var trendDayPromise = Charts.fillRTSDayTrend();
-      $q.all([barPromise, piePromise, trendPromise, trendDayPromise]).then(function(newData) {
+      var sentimentPromise = Charts.fillSentimentBars();
+      $q.all([barPromise, piePromise, trendPromise, trendDayPromise, sentimentPromise])
+      .then(function(newData) {
           delayed( function() {
             visuals[0].config.data = newData[0].data;
             visuals[0].config.labels = newData[0].labels;
@@ -109,7 +120,11 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
               visuals[3].config.labels = newData[3].labels;
             }, 1600)
           )
-
+          .then(
+            delayed( function() {
+              visuals[4].config = angular.copy(newData[4]);
+            }, 1600)
+          )
         }, function(reason) {
           checkFailReason(reason);
         }
@@ -124,6 +139,29 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
       play = undefined;
     }
   };
+
+  // $scope.sentimentOptions = {
+  //   scaleLabel : function (label) {
+  //     var v = label.value;
+  //     result = numeral(v).format('0.000');
+  //     return result;
+  //   },
+  //   showTooltips: true,
+  //   scaleBeginAtZero: false,
+  //   responsive: true,
+  //   tooltipTemplate : function (label) {
+  //     var v = label.value;
+  //     return label.label + ': ' + numeral(v).format('0.000');
+  //   }
+  // };
+
+  $scope.transactPieOptions = {
+    tooltipTemplate : function (label) {
+      var v = label.value;
+      return label.label + ': ' + numeral(v).format('0');
+    },
+    showTooltips: true
+  }
 
   $scope.$on("continuousUpdateChanged", function (event, args) {
     togglePlay();
@@ -145,6 +183,24 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
       OAuthSupport.authenticate();
   });
 
+  var calcWidgetSize = function(gesture) {
+    var width = $window.innerWidth;
+    var height = numeral(width/ 2).format('0.');
+    windowSize.width = width;
+    windowSize.height = height;
+    if (visuals[4].config.config.width !== undefined) {
+      visuals[4].config.config.width = width;
+      visuals[4].config.config.height =  height;
+    } 
+  }
+     
+  angular.element($window).bind('resize', function(){
+    $scope.$apply(function() {
+      calcWidgetSize();    
+    })       
+  });
+
+  calcWidgetSize();
   fillDashboard();
 })
 
@@ -178,6 +234,7 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
   OAuthSupport.authenticate();
 
   $scope.chart = Charts.get($stateParams.chartId);
+
 })
 
 .controller('AccountCtrl', function($rootScope, $scope, OAuthSupport, settings) {

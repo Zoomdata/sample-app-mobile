@@ -6,12 +6,25 @@
     </p>
 
 	<div class="card">
+		<div class="item item-divider">{{visuals[4].title}}
+			<a class="item-icon-right" href="#/tab/dash/bar/4">
+				<i class="icon ion-ios-arrow-forward"></i>
+			</a>
+		</div>
+		<div>
+          <bar-chart config="visuals[4].config.config" 
+          			 data="visuals[4].config.data">
+          </bar-chart>
+		</div>
+	</div>
+
+	<div class="card">
 		<div class="item item-divider item-icon-right">{{visuals[2].title}}
 			<a class="item-icon-right" href="#/tab/dash/line/2">
 				<i class="icon ion-ios-arrow-forward"></i>
 			</a>
 		</div>
-		<div class="item item-text-wrap">
+		<div>
 			<canvas id="line" class="chart chart-line" chart-data="visuals[2].config.data"
 			  chart-labels="visuals[2].config.labels" chart-legend="false" 
 			  chart-series="visuals[2].config.series"
@@ -61,7 +74,7 @@
 		<div class="item item-text-wrap">
 		    <canvas id="pie" class="chart chart-pie" chart-data="visuals[1].config.data" 
 		    chart-labels="visuals[1].config.labels" chart-legend="false" 
-		    chart-options="{showTooltips: true}">
+		    chart-options="transactPieOptions">
 		    </canvas>
 		</div>
 	</div>

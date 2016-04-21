@@ -142,11 +142,48 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		          }
 		        ]
 			}			
+		},
+		sentimentByGroupQuery: {
+			source: 'Real Time Sales',
+			cfg: {
+		       tz: 'EST',
+		       player: {
+		         pauseAfterRead: true,
+		         timeWindowScale: 'ROLLING'
+		       },
+		       time: {
+		         timeField: '_ts'
+		       },
+		       filters: [],
+		       groups: [{
+				 name: 'usergender',
+				 limit: 10,				 
+				 sort: {
+				    name: 'count',
+				    dir: 'desc'
+				 }
+		       },{
+		         name: 'group',
+		         limit: 20,
+		         sort: {
+		           dir: 'desc',
+		           name: 'count'
+		         }
+		       }],
+		       metrics: [{
+		         name: 'usersentiment',
+		         func: 'avg'
+		       }]
+		    }
 		}
 })
 .constant('settings', {
 		enableAlerts: false, 
 		continuousUpdate: true
+})
+.constant('windowSize', {
+	width: null,		// dynamically calculated
+	height: null		// dynamically calculated
 })
 .constant('visuals', [
 
@@ -169,6 +206,19 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		title: 'Actual vs. Planned - Rolling 7 Days',
 		type: 'line',
 		config: null
+	},
+	{
+		title: 'Avg Satisfaction - Rolling Hour',
+		type: 'bar',
+		config: {
+			config: {
+				height: 160
+			},
+			data: [{
+				name:'',
+				datapoints:[{x: ''}]
+			}]
+		}
 	}
 	])
 
