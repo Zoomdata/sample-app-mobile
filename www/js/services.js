@@ -1,5 +1,5 @@
-angular.module('starter.services', ['starter.queries'])
-.factory('Charts', function($state, ZDAccess) {
+angular.module('starter.services', ['starter.queries','starter.config'])
+.factory('Charts', function($state, windowSize, ZDAccess) {
 
   var o = {
     charts: [{
@@ -7,26 +7,6 @@ angular.module('starter.services', ['starter.queries'])
       name: 'Real Time Sales',
       lastText: 'Continuously generated sales data',
       face: 'img/rts.png'
-    }, {
-      id: 1,
-      name: '1 Billion Records',
-      lastText: '1 billion records of sales data',
-      face: 'img/1brts.png'
-    }, {
-      id: 2,
-      name: 'Fusion Dashboard',
-      lastText: 'Multi-source ticket marketplace fusion',
-      face: 'img/fusion.png'
-    }, {
-      id: 3,
-      name: 'Hotels Dashboard',
-      lastText: 'Data powered by Cloudera Search',
-      face: 'img/hotels.png'
-    }, {
-      id: 4,
-      name: 'Securities Analysis',
-      lastText: 'Stock ticker data analysis',
-      face: 'img/securities.png'
     }],
     dashboards: [{
       id: 0,
@@ -145,7 +125,7 @@ angular.module('starter.services', ['starter.queries'])
       return ZDAccess.querySalesTrend(processData);
   }
 
-    o.fillRTSDayTrend = function() {
+  o.fillRTSDayTrend = function() {
       var processData = function(queryData) {
         result = {};
 
@@ -171,6 +151,68 @@ angular.module('starter.services', ['starter.queries'])
       }
 
       return ZDAccess.queryDaySalesTrend(processData);
+  }
+
+  var myIndexOf = function(arr, name) {    
+      for (var i = 0; i < arr.length; i++) {
+          if (arr[i].name == name) {
+              return i;
+          }
+      }
+      return -1;
+  }
+
+  o.fillSentimentBars = function() {
+    var processData = function(queryData) {
+      var result = {};
+      var map = queryData.map(function(item) {
+        var newItem = { 
+            firstLevel: item.group[0], 
+            secondLevel: item.group[1], 
+            metric: item.current.metrics.usersentiment.avg
+        };
+        return newItem;
+      });
+
+      var data = map.reduce(
+        function(previousValue, currentValue, currentIndex, array) {
+          var dataPoint = {x: currentValue.secondLevel, y: currentValue.metric};
+          var name = currentValue.firstLevel;
+          var idx = myIndexOf(previousValue, name);
+          (idx == -1) ?
+                previousValue.push({name: name, datapoints: [dataPoint] }) :
+                previousValue[idx].datapoints.push(dataPoint);
+          return previousValue;
+        },[] 
+      );
+
+      var config = {
+          debug: true,
+          width: windowSize.width,
+          height: windowSize.height,
+          showXAxis: true,
+          showYAxis: true,
+          showLegend: true,
+          stack: false,
+          yAxis: {axisLine: {show: true} },
+          xAxis: {axisLine: {show: true} },
+          tooltip: {
+            formatter: function (params) {
+              return params[0] + '<br/>'
+                     + params[1] + ' : ' + numeral(params.value).format('0.000') + '<br/>';
+            }
+          },
+          legend: {
+            show: true
+          }
+      };
+      result.config = config;
+      result.data = data;
+
+      return result;
+    };
+
+    return ZDAccess.querySentiment(processData);
   }
 
   o.all = function() {

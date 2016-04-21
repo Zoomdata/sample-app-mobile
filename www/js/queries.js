@@ -47,6 +47,7 @@ angular.module('starter.queries', ['starter.config'])
 	o.queryProdCat = o.genericQuery(queryConfig.prodCatQuery);
 	o.querySalesTrend = o.genericQuery(queryConfig.salesTrendQuery);
 	o.queryDaySalesTrend = o.genericQuery(queryConfig.salesDayTrendQuery);
+	o.querySentiment = o.genericQuery(queryConfig.sentimentByGroupQuery);
 
 	var buildEndpoint = function(service) {
 		var protocol = serverConfig.application.secure ? 'https' : 'http';
