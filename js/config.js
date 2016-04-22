@@ -219,6 +219,11 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 				datapoints:[{x: ''}]
 			}]
 		}
+	},
+	{
+		title: 'Avg Satisfaction - Rolling Hour',
+		type: 'bar',
+		config: null
 	}
 	])
 

@@ -162,29 +162,29 @@ angular.module('starter.services', ['starter.queries','starter.config'])
       return -1;
   }
 
-  o.fillSentimentBars = function() {
-    var processData = function(queryData) {
-      var result = {};
-      var map = queryData.map(function(item) {
-        var newItem = { 
-            firstLevel: item.group[0], 
-            secondLevel: item.group[1], 
-            metric: item.current.metrics.usersentiment.avg
-        };
-        return newItem;
-      });
-
-      var data = map.reduce(
+  var reduceTwoDimResult = function(queryData) {
+      var data = queryData.reduce(
         function(previousValue, currentValue, currentIndex, array) {
-          var dataPoint = {x: currentValue.secondLevel, y: currentValue.metric};
-          var name = currentValue.firstLevel;
+          var firstLevel = currentValue.group[0];
+          var secondLevel = currentValue.group[1]; 
+          var metric = currentValue.current.metrics.usersentiment.avg;
+          var dataPoint = {x: secondLevel, y: metric};
+          var name = firstLevel;
           var idx = myIndexOf(previousValue, name);
           (idx == -1) ?
                 previousValue.push({name: name, datapoints: [dataPoint] }) :
                 previousValue[idx].datapoints.push(dataPoint);
           return previousValue;
         },[] 
-      );
+      );  
+      return data;  
+  }
+
+  o.fillSentimentBars = function() {
+    var processData = function(queryData) {
+      var result = {};
+
+      var data = reduceTwoDimResult(queryData);
 
       var config = {
           debug: true,
@@ -193,6 +193,12 @@ angular.module('starter.services', ['starter.queries','starter.config'])
           showXAxis: true,
           showYAxis: true,
           showLegend: true,
+          grid: {
+            x: 30,
+            y: 30,
+            x2: 20,
+            y2: 20
+          },
           stack: false,
           yAxis: {axisLine: {show: true} },
           xAxis: {axisLine: {show: true} },
@@ -213,6 +219,36 @@ angular.module('starter.services', ['starter.queries','starter.config'])
     };
 
     return ZDAccess.querySentiment(processData);
+  }
+
+ o.fillSentimentBars2 = function() {
+      var processData = function(queryData) {
+        var result = {};
+        var initial = reduceTwoDimResult(queryData);
+
+        var data = initial.map(function(item) {
+          return item.datapoints.map(function(item2) {
+            return item2.y;
+          });
+        });
+
+        var series = initial.map(function(item) {
+          return item.name;
+        });
+
+        var labels = initial[0].datapoints.map(function(item) {
+            return item.x;
+        });    
+
+        result.type = 'bar';
+        result.series = series;
+        result.data = data;
+        result.labels = labels;
+
+        return result;
+      };
+
+      return ZDAccess.querySentiment(processData);
   }
 
   o.all = function() {

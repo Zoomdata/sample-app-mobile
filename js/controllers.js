@@ -31,21 +31,21 @@ angular.module('starter.controllers', ['starter.services', 'starter.config', 'an
         // workaround as charts.js cannot render more than one chart update at the same time
         delayed( function() {
           visuals[2].config = angular.copy(data[2]);
-        }, 1600)
+        }, 900)
+        .then( 
+          delayed(function() {
+            visuals[0].config = angular.copy(data[0]);
+          }, 1600)
+        )
+        .then(
+          delayed( function() {
+            visuals[1].config = angular.copy(data[1]); 
+          }, 2000)
+        )
         .then(
           delayed( function() {
             visuals[3].config = angular.copy(data[3]);
-          }, 900)
-        )
-        .then( 
-            delayed(function() {
-              visuals[0].config = angular.copy(data[0]);
-            }, 2000)
-        )
-        .then(
-            delayed( function() {
-              visuals[1].config = angular.copy(data[1]); 
-            }, 2600)
+          }, 2600)
         )
         .then( 
           togglePlay()
@@ -120,10 +120,9 @@ angular.module('starter.controllers', ['starter.services', 'starter.config', 'an
               visuals[3].config.labels = newData[3].labels;
             }, 1600)
           )
-          .then(
-            delayed( function() {
+          .then( function() {
               visuals[4].config = angular.copy(newData[4]);
-            }, 1600)
+            }
           )
         }, function(reason) {
           checkFailReason(reason);
@@ -140,20 +139,20 @@ angular.module('starter.controllers', ['starter.services', 'starter.config', 'an
     }
   };
 
-  // $scope.sentimentOptions = {
-  //   scaleLabel : function (label) {
-  //     var v = label.value;
-  //     result = numeral(v).format('0.000');
-  //     return result;
-  //   },
-  //   showTooltips: true,
-  //   scaleBeginAtZero: false,
-  //   responsive: true,
-  //   tooltipTemplate : function (label) {
-  //     var v = label.value;
-  //     return label.label + ': ' + numeral(v).format('0.000');
-  //   }
-  // };
+  $scope.sentimentOptions = {
+    scaleLabel : function (label) {
+      var v = label.value;
+      result = numeral(v).format('0.000');
+      return result;
+    },
+    showTooltips: true,
+    scaleBeginAtZero: false,
+    responsive: true,
+    multiTooltipTemplate : function (label) {
+      var v = label.value;
+      return label.datasetLabel + ': ' + numeral(v).format('0.000');
+    }
+  };
 
   $scope.transactPieOptions = {
     tooltipTemplate : function (label) {
