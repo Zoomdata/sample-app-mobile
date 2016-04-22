@@ -7,7 +7,7 @@
 
 	<div class="card">
 		<div class="item item-divider">{{visuals[4].title}}
-			<a class="item-icon-right" href="#/tab/dash/bar/4">
+			<a class="item-icon-right" href="#/tab/dash/gbar/4">
 				<i class="icon ion-ios-arrow-forward"></i>
 			</a>
 		</div>
@@ -29,22 +29,6 @@
 			  chart-labels="visuals[2].config.labels" chart-legend="false" 
 			  chart-series="visuals[2].config.series"
 			  chart-options="{pointDot : false}" chart-colours="visuals[2].config.fillColor" 
-			  chart-click="onClick" >
-			</canvas> 
-		</div>
-	</div>
-
-	<div class="card">
-		<div class="item item-divider">{{visuals[3].title}}
-			<a class="item-icon-right" href="#/tab/dash/line/3">
-				<i class="icon ion-ios-arrow-forward"></i>
-			</a>
-		</div>
-		<div class="item item-text-wrap">
-			<canvas id="line" class="chart chart-line" chart-data="visuals[3].config.data"
-			  chart-labels="visuals[3].config.labels" chart-legend="false" 
-			  chart-series="visuals[3].config.series"
-			  chart-options="{pointDot : false}" chart-colours="visuals[3].config.fillColor" 
 			  chart-click="onClick" >
 			</canvas> 
 		</div>
@@ -79,5 +63,21 @@
 		</div>
 	</div>
 
+	<div class="card">
+		<div class="item item-divider">{{visuals[3].title}}
+			<a class="item-icon-right" href="#/tab/dash/line/3">
+				<i class="icon ion-ios-arrow-forward"></i>
+			</a>
+		</div>
+		<div class="item item-text-wrap">
+			<canvas id="line" class="chart chart-line" chart-data="visuals[3].config.data"
+			  chart-labels="visuals[3].config.labels" chart-legend="false" 
+			  chart-series="visuals[3].config.series"
+			  chart-options="{pointDot : false}" chart-colours="visuals[3].config.fillColor" 
+			  chart-click="onClick" >
+			</canvas> 
+		</div>
+	</div>
+	
   </ion-content>
 </ion-view>
