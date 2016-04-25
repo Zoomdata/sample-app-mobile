@@ -280,7 +280,12 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		    version: 1,
 		    color: ['#fdc086','#386cb0'], 
 		    tooltip: {
-		      trigger: 'axis'
+		      	trigger: 'axis',
+				formatter: function (params) {
+					return params[0][1] + '<br/>'
+					     + params[0][0] + ' : ' + numeral(params[0].value).format('$0,000.') + '<br/>'
+					     + params[1][0] + ' : ' + numeral(params[1].value).format('$0,000.') + '<br/>';
+				}
 		    },
 		    legend: {
 		      data: [],
@@ -306,7 +311,12 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		    yAxis: [
 		      {
 		        type: 'value',
-		        splitArea: {show: true}
+		        splitArea: {show: true},
+		        axisLabel: {
+		        	formatter: function (params) {
+						return numeral(params).format('$0,000.');
+					}
+		        }
 		      }
 		    ],
 		    series: [
