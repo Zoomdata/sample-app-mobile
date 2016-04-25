@@ -37,19 +37,16 @@ angular.module('starter.services', ['starter.queries','starter.config'])
   };
 
   o.fillRTSPie = function() {
+      var visConfig = visuals[1].config;
+      visConfig.zd_height = windowSize.height;
+      visConfig.zd_width = windowSize.width;
       var processData = function(queryData) {
-        var result = {};
         var data = queryData.map(function(item) {
-          return item.current.count;
+          return {value: item.current.count, name: item.group[0]};
         });
-        var labels = queryData.map(function(item) {
-          return item.group[0];
-        });
-        result.type = 'pie';
-        result.data = data;
-        result.labels = labels;
-
-        return result;
+        var visConfig = visuals[1].config;
+        visConfig.series[0].name = 'Product Group';
+        visConfig.series[0].data = data;
       };
 
       return ZDAccess.queryProdGroup(processData);
@@ -63,8 +60,10 @@ angular.module('starter.services', ['starter.queries','starter.config'])
   }
 
   o.fillRTSBar = function() {
+      var visConfig = visuals[0].config;
+      visConfig.zd_height = windowSize.height;
+      visConfig.zd_width = windowSize.width;
       var processData = function(queryData) {
-        var result = {};
         var data  = queryData.map(function(item) {
           return item.current.count;
         });
@@ -72,36 +71,34 @@ angular.module('starter.services', ['starter.queries','starter.config'])
           return item.current.metrics.price.sum;
         });
         var labels = queryData.map(function(item) {
-          var truncStr = truncate(item.group[0], 7);
-          return truncStr;
+          return item.group[0];
         });        
 
-        // colors setup
+        // shows how to obtain a color scale to use for sales amounts
+        // the colors would be plugged into the series itemstyle color array for the chart
         var bins = chroma.limits(sales, 'e', 5);
         var scale = chroma.scale(([ '#fee08b', '#e6f598', '#99d594', '#3288bd']))
               .domain(bins);
         var colors = sales.map(function(value) {
             return chroma(scale(value)).hex();
         });
-        result.type = 'bar';
-        result.series = ['Product Category'];
-        result.data = [sales];
-        result.labels = labels;
-        result.fillColor = [{
-          fillColor: colors,
-          strokeColor: colors
-        }];
 
-        return result;
+        // populating visualization
+        var visConfig = visuals[0].config;
+        visConfig.series[0].name = 'Product Category';
+        visConfig.series[0].data = sales;
+        visConfig.xAxis[0].data = labels
+        visConfig.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
       };
 
       return ZDAccess.queryProdCat(processData);
   }
 
   o.fillRTSTrend = function() {
-      var processData = function(queryData) {
-        result = {};
-
+    var visConfig = visuals[2].config;
+    visConfig.zd_height = windowSize.height;
+    visConfig.zd_width = windowSize.width;
+    var processData = function(queryData) {
         var sales = queryData.map(function(item) {
             return item.current.metrics.price.sum.toFixed(0);
         });
@@ -111,57 +108,64 @@ angular.module('starter.services', ['starter.queries','starter.config'])
 
         var labels = queryData.map(function(item, index) {
             var currentTime = moment(item.group[0] + 'Z','YYYY-MM-DD HH:mm:ssZ');
-            return index % 5 ? "" : currentTime.format('HH:mm');
+            return currentTime.format('HH:mm');
         }); 
 
-        result.type = 'line';
-        result.series = ['Sales', 'Planned Sales'];
-        result.data = [sales, plannedSales];
-        result.labels = labels;
-        result.fillColor = ['#2b83ba', '#fdae61'];
-
-        return result;
-      }
-
-      return ZDAccess.querySalesTrend(processData);
-  }
-
-  o.fillRTSTrend2 = function() {
-    visuals[5].config.zd_height = windowSize.height;
-    visuals[5].config.zd_width = windowSize.width;
-
-    var processData = visuals[5].processData.bind(visuals[5].config);
+        var visConfig = visuals[2].config;
+        visConfig.series[0].name = 'Sales';
+        visConfig.series[1].name = 'Planned Sales';
+        visConfig.legend.data = [visConfig.series[0].name, visConfig.series[1].name];
+        visConfig.series[0].data = sales;
+        visConfig.series[1].data = plannedSales;
+        visConfig.xAxis[0].data = labels;
+        visConfig.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
+    }
 
     return ZDAccess.querySalesTrend(processData);
   }
 
   o.fillRTSDayTrend = function() {
+      var visConfig = visuals[3].config;
+      visConfig.zd_height = windowSize.height;
+      visConfig.zd_width = windowSize.width;
+
       var processData = function(queryData) {
-        result = {};
+          var sales = queryData.map(function(item) {
+              return item.current.metrics.price.sum.toFixed(0);
+          });
+          var plannedSales = queryData.map(function(item) {
+              return item.current.metrics.plannedsales.sum.toFixed(0);
+          });
 
-        var sales = queryData.map(function(item) {
-            return item.current.metrics.price.sum.toFixed(0);
-        });
-        var plannedSales = queryData.map(function(item) {
-            return item.current.metrics.plannedsales.sum.toFixed(0);
-        });
+          var labels = queryData.map(function(item, index) {
+              var currentTime = moment(item.group[0],'YYYY-MM-DD HH:mm:ss');
+              return currentTime.format('MM/DD/YYYY');
+          }); 
 
-        var labels = queryData.map(function(item, index) {
-            return moment(item.group[0],'YYYY-MM-DD HH:mm:ss')
-                  .format('MM/DD/YYYY');
-        }); 
+          var visConfig = visuals[3].config;
 
-        result.type = 'line';
-        result.series = ['Sales', 'Planned Sales'];
-        result.data = [sales, plannedSales];
-        result.labels = labels;
-        result.fillColor = ['#2b83ba', '#fdae61'];
-
-        return result;
+          visConfig.series[0].name = 'Sales';
+          visConfig.series[1].name = 'Planned Sales';
+          visConfig.legend.data = [visConfig.series[0].name, visConfig.series[1].name];
+          visConfig.series[0].data = sales;
+          visConfig.series[1].data = plannedSales;
+          visConfig.xAxis[0].data = labels;
+          visConfig.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
       }
 
       return ZDAccess.queryDaySalesTrend(processData);
   }
+
+  var bigMoneyFormatter = function (v) {
+    if (v > 999999 ) {
+      result = '$' + numeral(v/1000000).format('0,0') + ' M';
+    } else if (v > 999) {
+      result = '$' + numeral(v/1000).format('0,0') + ' K';
+    } else {
+      result = '$' + numeral(v).format('0,0');
+    }
+    return result;
+  };
 
   var myIndexOf = function(arr, name) {    
       for (var i = 0; i < arr.length; i++) {
@@ -191,13 +195,16 @@ angular.module('starter.services', ['starter.queries','starter.config'])
   }
 
   o.fillSentimentBars = function() {
-    visuals[4].config.zd_height = windowSize.height;
-    visuals[4].config.zd_width = windowSize.width;
+    var visConfig = visuals[4].config;
+    visConfig.zd_height = windowSize.height;
+    visConfig.zd_width = windowSize.width;
+
     var processData = function(queryData) {
+      var visConfig = visuals[4].config;
       var data = reduceTwoDimResult(queryData);
-      visuals[4].config.series[0].name = data[0].name;
-      visuals[4].config.series[1].name = data[1].name;
-      visuals[4].config.legend.data = [data[0].name, data[1].name];
+      visConfig.series[0].name = data[0].name;
+      visConfig.series[1].name = data[1].name;
+      visConfig.legend.data = [data[0].name, data[1].name];
 
       var labels = data[0].datapoints.map(function(item, index) {
         return item.x;
@@ -208,10 +215,10 @@ angular.module('starter.services', ['starter.queries','starter.config'])
       var series1 = data[1].datapoints.map(function(item, index) {
         return item.y;
       });
-      visuals[4].config.series[0].data = series0;
-      visuals[4].config.series[1].data = series1;
+      visConfig.series[0].data = series0;
+      visConfig.series[1].data = series1;
 
-      visuals[4].config.xAxis[0].data = labels;
+      visConfig.xAxis[0].data = labels;
     }
 
     return ZDAccess.querySentiment(processData);
