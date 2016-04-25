@@ -1,5 +1,5 @@
 angular.module('starter.services', ['starter.queries','starter.config'])
-.factory('Charts', function($state, windowSize, ZDAccess) {
+.factory('Charts', function($state, windowSize, ZDAccess, visuals) {
 
   var o = {
     charts: [{
@@ -110,7 +110,8 @@ angular.module('starter.services', ['starter.queries','starter.config'])
         });
 
         var labels = queryData.map(function(item, index) {
-            return index % 5 ? "" : moment(item.group[0],'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+            var currentTime = moment(item.group[0] + 'Z','YYYY-MM-DD HH:mm:ssZ');
+            return index % 5 ? "" : currentTime.format('HH:mm');
         }); 
 
         result.type = 'line';
@@ -123,6 +124,15 @@ angular.module('starter.services', ['starter.queries','starter.config'])
       }
 
       return ZDAccess.querySalesTrend(processData);
+  }
+
+  o.fillRTSTrend2 = function() {
+    visuals[5].config.zd_height = windowSize.height;
+    visuals[5].config.zd_width = windowSize.width;
+
+    var processData = visuals[5].processData.bind(visuals[5].config);
+
+    return ZDAccess.querySalesTrend(processData);
   }
 
   o.fillRTSDayTrend = function() {
@@ -219,36 +229,6 @@ angular.module('starter.services', ['starter.queries','starter.config'])
     };
 
     return ZDAccess.querySentiment(processData);
-  }
-
- o.fillSentimentBars2 = function() {
-      var processData = function(queryData) {
-        var result = {};
-        var initial = reduceTwoDimResult(queryData);
-
-        var data = initial.map(function(item) {
-          return item.datapoints.map(function(item2) {
-            return item2.y;
-          });
-        });
-
-        var series = initial.map(function(item) {
-          return item.name;
-        });
-
-        var labels = initial[0].datapoints.map(function(item) {
-            return item.x;
-        });    
-
-        result.type = 'bar';
-        result.series = series;
-        result.data = data;
-        result.labels = labels;
-
-        return result;
-      };
-
-      return ZDAccess.querySentiment(processData);
   }
 
   o.all = function() {

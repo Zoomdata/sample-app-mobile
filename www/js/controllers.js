@@ -25,18 +25,16 @@ angular.module('starter.controllers', ['starter.services', 'starter.config', 'an
     var trendPromise = Charts.fillRTSTrend();
     var trendDayPromise = Charts.fillRTSDayTrend();
     var sentimentPromise = Charts.fillSentimentBars();
-    $q.all([barPromise, piePromise, trendPromise, trendDayPromise, sentimentPromise])
+    var trendPromise2 = Charts.fillRTSTrend2();
+    $q.all([barPromise, piePromise, trendPromise, trendDayPromise, sentimentPromise, trendPromise2])
     .then(function(data) {
         visuals[4].config = angular.copy(data[4]);
+        visuals[5].config.zd_data_status = 'ready';
+        visuals[5].config.version++;
         // workaround as charts.js cannot render more than one chart update at the same time
         delayed( function() {
-          visuals[2].config = angular.copy(data[2]);
+          visuals[0].config = angular.copy(data[0]);
         }, 900)
-        .then( 
-          delayed(function() {
-            visuals[0].config = angular.copy(data[0]);
-          }, 1600)
-        )
         .then(
           delayed( function() {
             visuals[1].config = angular.copy(data[1]); 
@@ -96,7 +94,8 @@ angular.module('starter.controllers', ['starter.services', 'starter.config', 'an
       var trendPromise = Charts.fillRTSTrend();
       var trendDayPromise = Charts.fillRTSDayTrend();
       var sentimentPromise = Charts.fillSentimentBars();
-      $q.all([barPromise, piePromise, trendPromise, trendDayPromise, sentimentPromise])
+      var trendPromise2 = Charts.fillRTSTrend2();
+      $q.all([barPromise, piePromise, trendPromise, trendDayPromise, sentimentPromise, trendPromise2])
       .then(function(newData) {
           delayed( function() {
             visuals[0].config.data = newData[0].data;
@@ -110,18 +109,13 @@ angular.module('starter.controllers', ['starter.services', 'starter.config', 'an
           )
           .then(
             delayed( function() {
-              visuals[2].config.data = newData[2].data;
-              visuals[2].config.labels = newData[2].labels;
-            }, 1600)
-          )
-          .then(
-            delayed( function() {
               visuals[3].config.data = newData[3].data;
               visuals[3].config.labels = newData[3].labels;
             }, 1600)
           )
           .then( function() {
               visuals[4].config = angular.copy(newData[4]);
+              visuals[5].config.version++;
             }
           )
         }, function(reason) {
@@ -157,7 +151,7 @@ angular.module('starter.controllers', ['starter.services', 'starter.config', 'an
   $scope.transactPieOptions = {
     tooltipTemplate : function (label) {
       var v = label.value;
-      return label.label + ': ' + numeral(v).format('0');
+      return label.label + ': ' + numeral(v).format('0,000');
     },
     showTooltips: true
   }
@@ -178,19 +172,19 @@ angular.module('starter.controllers', ['starter.services', 'starter.config', 'an
     console.log(points, evt);
   };
 
-  $scope.$on('$ionicView.enter', function(e) {
-      OAuthSupport.authenticate();
-  });
-
   var calcWidgetSize = function(gesture) {
     var width = $window.innerWidth;
-    var height = numeral(width/ 2).format('0.');
+    var height = width/ 2;
     windowSize.width = width;
     windowSize.height = height;
     if (visuals[4].config.config.width !== undefined) {
       visuals[4].config.config.width = width;
       visuals[4].config.config.height =  height;
-    } 
+    }
+  }
+
+  $scope.style = function(windowSize) {
+      return { 'height': windowSize.height + 'px', 'width':  windowSize.width + 'px'};
   }
      
   angular.element($window).bind('resize', function(){
@@ -199,8 +193,15 @@ angular.module('starter.controllers', ['starter.services', 'starter.config', 'an
     })       
   });
 
+  $scope.$on('$ionicView.enter', function(e) {
+      console.log('on $ionicView.enter');
+      OAuthSupport.authenticate();
+  });
+
   calcWidgetSize();
+  $scope.windowSize = windowSize;
   fillDashboard();
+
 })
 
 .controller('DashChartDetailCtrl', function($scope, $stateParams, OAuthSupport, visuals) {

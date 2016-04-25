@@ -18,21 +18,23 @@
 		</div>
 	</div>
 
-	<div class="card">
-		<div class="item item-divider item-icon-right">{{visuals[2].title}}
-			<a class="item-icon-right" href="#/tab/dash/line/2">
+    <div class="card">
+		<div class="item item-divider">{{visuals[5].title}}
+			<a class="item-icon-right" href="#/tab/dash/gbar/4">
 				<i class="icon ion-ios-arrow-forward"></i>
 			</a>
 		</div>
-		<div>
-			<canvas id="line" class="chart chart-line" chart-data="visuals[2].config.data"
-			  chart-labels="visuals[2].config.labels" chart-legend="false" 
-			  chart-series="visuals[2].config.series"
-			  chart-options="{pointDot : false}" chart-colours="visuals[2].config.fillColor" 
-			  chart-click="onClick" >
-			</canvas> 
+		<div ng-switch on="visuals[5].config.zd_data_status">
+			<div ng-switch-when="ready">
+				<div data-iu-chart="visuals[5].config" class="iuChart" 
+					ng-style="style(windowSize)">
+				</div>
+			</div>
+			<div ng-switch-when="not_ready">
+				<div style="height: 160px"></div>
+			</div>
 		</div>
-	</div>
+    </div>
 
 	<div class="card">
 		<div class="item item-divider">{{visuals[0].title}}

@@ -1,0 +1,33 @@
+{
+  "name": "iu-echarts",
+  "authors": [
+    "huk <ihuke@126.com>"
+  ],
+  "description": "eCharts for Angular.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "angular",
+    "baidu",
+    "echarts"
+  ],
+  "dependencies": {
+    "angular": "1.3.x",
+    "jquery": "2.x.x",
+    "echarts": "~2.1.10"
+  },
+  "devDependencies": {},
+  "resolutions": {},
+  "homepage": "https://github.com/ihuke/iu-echarts",
+  "_release": "b609296b4e",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "b609296b4eaed7ee17f7653f94fe714272d3a521"
+  },
+  "_source": "https://github.com/ihuke/iu-echarts.git",
+  "_target": "*",
+  "_originalSource": "iu-echarts",
+  "_direct": true
+}

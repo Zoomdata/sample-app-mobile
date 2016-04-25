@@ -29,9 +29,11 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		       player: {
 		         speed: 1,
 		         pauseAfterRead: true,
-		         timeWindowScale: 'ROLLING'
+		         timeWindowScale: 'PINNED'
 		       },
 		       time: {
+				 from: '+$start_of_day',
+				 to: '+$now',
 		         timeField: '_ts'
 		       },
 		       filters: [],
@@ -186,14 +188,13 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 	height: null		// dynamically calculated
 })
 .constant('visuals', [
-
 	{
 		title: 'Sales by Category - Rolling Hour',
 		type: 'bar',
 		config: null
 	},
 	{
-		title: 'Transactions by Group - Rolling Hour',
+		title: 'Transactions by Group - Today',
 		type: 'pie',
 		config: null
 	},
@@ -221,9 +222,81 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		}
 	},
 	{
-		title: 'Avg Satisfaction - Rolling Hour',
-		type: 'bar',
-		config: null
+		title: 'Actual vs. Planned - Rolling Hour',
+		type: 'line',
+		config: {
+			zd_data_status: 'not_ready',
+			zd_height: null,
+			zd_width: null,
+		    version: 1,
+		    color: ['#fdc086','#386cb0'], 
+		    tooltip: {
+		      trigger: 'axis'
+		    },
+		    legend: {
+		      data: [],
+		      y: 'top'
+		    },
+		    toolbox: {
+		      show: false
+		    },
+		    grid: {
+	            x: 60,
+	            y: 30,
+	            x2: 20,
+	            y2: 20
+		    },
+		    padding: 0,
+		    calculable: true,
+		    xAxis: [
+		      {
+		        type: 'category',
+		        data: []
+		      }
+		    ],
+		    yAxis: [
+		      {
+		        type: 'value',
+		        splitArea: {show: true}
+		      }
+		    ],
+		    series: [
+		      {
+		        name: '',
+		        type: 'line',
+		        smooth: true,
+		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
+		        data: []
+		      },
+		      {
+		        name: '',
+		        type: 'line',
+		        smooth: true,
+		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
+		        data: []
+		      }
+		    ]
+		  },
+		  processData: function(queryData) {
+	        var sales = queryData.map(function(item) {
+	            return item.current.metrics.price.sum.toFixed(0);
+	        });
+	        var plannedSales = queryData.map(function(item) {
+	            return item.current.metrics.plannedsales.sum.toFixed(0);
+	        });
+
+	        var labels = queryData.map(function(item, index) {
+	            var currentTime = moment(item.group[0] + 'Z','YYYY-MM-DD HH:mm:ssZ');
+	            return currentTime.format('HH:mm');
+	        }); 
+	        this.series[0].name = 'Sales';
+	        this.series[1].name = 'Planned Sales';
+	        this.legend.data = [this.series[0].name, this.series[1].name];
+	        this.series[0].data = sales;
+	        this.series[1].data = plannedSales;
+
+	        this.xAxis[0].data = labels;
+	      }
 	}
 	])
 
@@ -242,7 +315,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 	}
 
 	o.obtainRedirect = function() {
-		console.log('prod is ' + production);
+		console.log('production mode is ' + production);
 		var result;
 		if (window.cordova === undefined ) {
 			result = production ? redirect.browser_prod_uri : redirect.browser_dev_uri ;

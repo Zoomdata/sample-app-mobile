@@ -5,6 +5,7 @@
     "ionic": "driftyco/ionic-bower#1.2.4"
   },
   "dependencies": {
-    "angular-echarts": "^0.3.5"
+    "angular-echarts": "^0.3.5",
+    "iu-echarts": "*"
   }
 }
