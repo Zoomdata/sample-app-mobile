@@ -1,4 +1,4 @@
-angular.module('starter', ['ionic','chart.js', 'starter.controllers', 'starter.config', 'iu'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.config', 'iu'])
 .run(function($ionicPlatform, OAuthFinish) {
   OAuthFinish.checkToken();
   $ionicPlatform.ready(function() {
@@ -65,42 +65,11 @@ angular.module('starter', ['ionic','chart.js', 'starter.controllers', 'starter.c
       }
     }
   })
-
-  .state('tab.dash-line', {
-    url: '/dash/line/:chartId',
-    views: {
-      'tab-dash': {
-        templateUrl: 'templates/dash-line.html',
-        controller: 'DashChartDetailCtrl'
-      }
-    }
-  })
-
-  .state('tab.dash-bar', {
-    url: '/dash/bar/:chartId',
-    views: {
-      'tab-dash': {
-        templateUrl: 'templates/dash-bar.html',
-        controller: 'DashChartDetailCtrl'
-      }
-    }
-  })
-
   .state('tab.dash-gbar', {
-    url: '/dash/gbar/:chartId',
+    url: '/dash/sviz/:chartId',
     views: {
       'tab-dash': {
-        templateUrl: 'templates/dash-grouped-bar.html',
-        controller: 'DashChartDetailCtrl'
-      }
-    }
-  })
-
-  .state('tab.dash-pie', {
-    url: '/dash/pie/:chartId',
-    views: {
-      'tab-dash': {
-        templateUrl: 'templates/dash-pie.html',
+        templateUrl: 'templates/dash-single-viz.html',
         controller: 'DashChartDetailCtrl'
       }
     }
@@ -155,29 +124,3 @@ angular.module('starter', ['ionic','chart.js', 'starter.controllers', 'starter.c
 .constant('numeral', window.numeral)
 .constant('production', true)
 ;
-
-// Charts.js global defaults
-Chart.defaults.global.scaleLabel = function (label) {
-    var v = label.value;
-    if (v > 999999 ) {
-      result = '$' + numeral(v/1000000).format('0,0') + ' M';
-    } else if (label.value > 999999) {
-      result = '$' + numeral(v/1000).format('0,0') + ' k';
-    } else {
-      result = '$' + numeral(v).format('0,0');
-    }
-    return result;
-};
-
-Chart.defaults.global.multiTooltipTemplate = function (label) {
-    var v = label.value;
-    return label.datasetLabel + ': ' + '$' + numeral(v).format('0,0');
-}; 
-
-Chart.defaults.global.tooltipTemplate = function(value) {
-    if (value.label)  {
-        return value.label + ":" + '$' + numeral(value.value).format('0,0');
-    } else {
-        return value.value;
-    }
-};

@@ -1,0 +1,16 @@
+<ion-view view-title="{{chart.title}}">
+  <ion-content class="padding">
+	<div ng-switch on="chart.config.zd_data_status">
+		<div ng-switch-when="ready">
+			<div data-iu-chart="chart.config" class="iuChart" 
+				ng-style="style(windowSize)">
+			</div>
+		</div>
+		<div ng-switch-when="not_ready">
+			<div style="height: 160px"></div>
+		</div>
+	</div>
+  </ion-content>
+</ion-view>
+
+

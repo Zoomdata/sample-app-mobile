@@ -7,7 +7,7 @@
 
     <div class="card">
 		<div class="item item-divider">{{visuals[4].title}}
-			<a class="item-icon-right" href="#/tab/dash/gbar/4">
+			<a class="item-icon-right" href="#/tab/dash/sviz/4">
 				<i class="icon ion-ios-arrow-forward"></i>
 			</a>
 		</div>
@@ -24,14 +24,14 @@
     </div>
 
     <div class="card">
-		<div class="item item-divider">{{visuals[5].title}}
-			<a class="item-icon-right" href="#/tab/dash/gbar/5">
+		<div class="item item-divider">{{visuals[2].title}}
+			<a class="item-icon-right" href="#/tab/dash/sviz/2">
 				<i class="icon ion-ios-arrow-forward"></i>
 			</a>
 		</div>
-		<div ng-switch on="visuals[5].config.zd_data_status">
+		<div ng-switch on="visuals[2].config.zd_data_status">
 			<div ng-switch-when="ready">
-				<div data-iu-chart="visuals[5].config" class="iuChart" 
+				<div data-iu-chart="visuals[2].config" class="iuChart" 
 					ng-style="style(windowSize)">
 				</div>
 			</div>
@@ -41,50 +41,59 @@
 		</div>
     </div>
 
-	<div class="card">
+    <div class="card">
 		<div class="item item-divider">{{visuals[0].title}}
-			<a class="item-icon-right" href="#/tab/dash/bar/0">
+			<a class="item-icon-right" href="#/tab/dash/sviz/0">
 				<i class="icon ion-ios-arrow-forward"></i>
 			</a>
 		</div>
-		<div class="item item-text-wrap">
-		    <canvas id="bar" class="chart chart-bar" chart-data="visuals[0].config.data" 
-		    chart-labels="visuals[0].config.labels" chart-legend="false" 
-		    chart-series="visuals[0].config.series" chart-options="{showTooltips: true}" 
-		    chart-colours="visuals[0].config.fillColor" >
-		    </canvas>
+		<div ng-switch on="visuals[0].config.zd_data_status">
+			<div ng-switch-when="ready">
+				<div data-iu-chart="visuals[0].config" class="iuChart" 
+					ng-style="style(windowSize)">
+				</div>
+			</div>
+			<div ng-switch-when="not_ready">
+				<div style="height: 160px"></div>
+			</div>
 		</div>
-	</div>
+    </div>
 
-	<div class="card">
+    <div class="card">
 		<div class="item item-divider">{{visuals[1].title}}
-			<a class="item-icon-right" href="#/tab/dash/pie/1">
+			<a class="item-icon-right" href="#/tab/dash/sviz/1">
 				<i class="icon ion-ios-arrow-forward"></i>
 			</a>
 		</div>
-		<div class="item item-text-wrap">
-		    <canvas id="pie" class="chart chart-pie" chart-data="visuals[1].config.data" 
-		    chart-labels="visuals[1].config.labels" chart-legend="false" 
-		    chart-options="transactPieOptions">
-		    </canvas>
+		<div ng-switch on="visuals[1].config.zd_data_status">
+			<div ng-switch-when="ready">
+				<div data-iu-chart="visuals[1].config" class="iuChart" 
+					ng-style="style(windowSize)">
+				</div>
+			</div>
+			<div ng-switch-when="not_ready">
+				<div style="height: 160px"></div>
+			</div>
 		</div>
-	</div>
+    </div>
 
-	<div class="card">
+    <div class="card">
 		<div class="item item-divider">{{visuals[3].title}}
-			<a class="item-icon-right" href="#/tab/dash/line/3">
+			<a class="item-icon-right" href="#/tab/dash/sviz/3">
 				<i class="icon ion-ios-arrow-forward"></i>
 			</a>
 		</div>
-		<div class="item item-text-wrap">
-			<canvas id="line" class="chart chart-line" chart-data="visuals[3].config.data"
-			  chart-labels="visuals[3].config.labels" chart-legend="false" 
-			  chart-series="visuals[3].config.series"
-			  chart-options="{pointDot : false}" chart-colours="visuals[3].config.fillColor" 
-			  chart-click="onClick" >
-			</canvas> 
+		<div ng-switch on="visuals[3].config.zd_data_status">
+			<div ng-switch-when="ready">
+				<div data-iu-chart="visuals[3].config" class="iuChart" 
+					ng-style="style(windowSize)">
+				</div>
+			</div>
+			<div ng-switch-when="not_ready">
+				<div style="height: 160px"></div>
+			</div>
 		</div>
-	</div>
+    </div>
 	
   </ion-content>
 </ion-view>
