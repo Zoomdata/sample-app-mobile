@@ -212,14 +212,63 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		title: 'Avg Satisfaction - Rolling Hour',
 		type: 'bar',
 		config: {
-			config: {
-				height: 160
+			zd_data_status: 'not_ready',
+			zd_height: null,
+			zd_width: null,
+		    version: 1,
+			tooltip: {
+				formatter: function (params) {
+				  return params[0] + '<br/>'
+				         + params[1] + ' : ' + numeral(params.value).format('0.000') + '<br/>';
+				}
 			},
-			data: [{
-				name:'',
-				datapoints:[{x: ''}]
-			}]
-		}
+			legend: {
+				show: true,
+				y: 'top'
+			},
+		    toolbox: {
+		      show: false
+		    },
+			grid: {
+				x: 50,
+				y: 30,
+				x2: 20,
+				y2: 20
+			},
+			stack: false,
+		    padding: 0,
+		    calculable: true,
+		    xAxis: [
+		      {
+		        type: 'category',
+		        axisLine: {show: true},
+		        data: []
+		      }
+		    ],
+		    yAxis: [
+		      {
+		        type: 'value',
+		        axisLine: {show: true},
+		        splitArea: {show: true}
+		      }
+		    ],
+		    series: [
+		      {
+		        name: '',
+		        type:'bar',
+		        smooth: true,
+		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
+		        data: []
+		      },
+		      {
+		        name: '',
+				type:'bar',
+		        smooth: true,
+		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
+		        data: []
+		      }
+		    ]
+		  }
 	},
 	{
 		title: 'Actual vs. Planned - Rolling Hour',
@@ -243,7 +292,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		    grid: {
 	            x: 60,
 	            y: 30,
-	            x2: 20,
+	            x2: 28,
 	            y2: 20
 		    },
 		    padding: 0,

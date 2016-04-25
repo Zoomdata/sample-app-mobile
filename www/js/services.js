@@ -1,5 +1,5 @@
 angular.module('starter.services', ['starter.queries','starter.config'])
-.factory('Charts', function($state, windowSize, ZDAccess, visuals) {
+.factory('Charts', function($window, $state, windowSize, ZDAccess, visuals) {
 
   var o = {
     charts: [{
@@ -172,7 +172,7 @@ angular.module('starter.services', ['starter.queries','starter.config'])
       return -1;
   }
 
-  var reduceTwoDimResult = function(queryData) {
+ var reduceTwoDimResult = function(queryData) {
       var data = queryData.reduce(
         function(previousValue, currentValue, currentIndex, array) {
           var firstLevel = currentValue.group[0];
@@ -191,42 +191,28 @@ angular.module('starter.services', ['starter.queries','starter.config'])
   }
 
   o.fillSentimentBars = function() {
+    visuals[4].config.zd_height = windowSize.height;
+    visuals[4].config.zd_width = windowSize.width;
     var processData = function(queryData) {
-      var result = {};
-
       var data = reduceTwoDimResult(queryData);
+      visuals[4].config.series[0].name = data[0].name;
+      visuals[4].config.series[1].name = data[1].name;
+      visuals[4].config.legend.data = [data[0].name, data[1].name];
 
-      var config = {
-          debug: true,
-          width: windowSize.width,
-          height: windowSize.height,
-          showXAxis: true,
-          showYAxis: true,
-          showLegend: true,
-          grid: {
-            x: 30,
-            y: 30,
-            x2: 20,
-            y2: 20
-          },
-          stack: false,
-          yAxis: {axisLine: {show: true} },
-          xAxis: {axisLine: {show: true} },
-          tooltip: {
-            formatter: function (params) {
-              return params[0] + '<br/>'
-                     + params[1] + ' : ' + numeral(params.value).format('0.000') + '<br/>';
-            }
-          },
-          legend: {
-            show: true
-          }
-      };
-      result.config = config;
-      result.data = data;
+      var labels = data[0].datapoints.map(function(item, index) {
+        return item.x;
+      });
+      var series0 = data[0].datapoints.map(function(item, index) {
+        return item.y;
+      });
+      var series1 = data[1].datapoints.map(function(item, index) {
+        return item.y;
+      });
+      visuals[4].config.series[0].data = series0;
+      visuals[4].config.series[1].data = series1;
 
-      return result;
-    };
+      visuals[4].config.xAxis[0].data = labels;
+    }
 
     return ZDAccess.querySentiment(processData);
   }
@@ -273,6 +259,13 @@ angular.module('starter.services', ['starter.queries','starter.config'])
     ).finally(function() {
       $state.go('tab.dash');
     });
+  }
+
+  o.calcWidgetSize = function(gesture) {
+    var width = $window.innerWidth;
+    var height = width/ 2;
+    windowSize.width = width;
+    windowSize.height = height;
   }
 
   return o;

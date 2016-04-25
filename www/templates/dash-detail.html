@@ -5,22 +5,27 @@
       {{dash.lastText}}
     </p>
 
-	<div class="card">
+    <div class="card">
 		<div class="item item-divider">{{visuals[4].title}}
 			<a class="item-icon-right" href="#/tab/dash/gbar/4">
 				<i class="icon ion-ios-arrow-forward"></i>
 			</a>
 		</div>
-		<div>
-          <bar-chart config="visuals[4].config.config" 
-          			 data="visuals[4].config.data">
-          </bar-chart>
+		<div ng-switch on="visuals[4].config.zd_data_status">
+			<div ng-switch-when="ready">
+				<div data-iu-chart="visuals[4].config" class="iuChart" 
+					ng-style="style(windowSize)">
+				</div>
+			</div>
+			<div ng-switch-when="not_ready">
+				<div style="height: 160px"></div>
+			</div>
 		</div>
-	</div>
+    </div>
 
     <div class="card">
 		<div class="item item-divider">{{visuals[5].title}}
-			<a class="item-icon-right" href="#/tab/dash/gbar/4">
+			<a class="item-icon-right" href="#/tab/dash/gbar/5">
 				<i class="icon ion-ios-arrow-forward"></i>
 			</a>
 		</div>
