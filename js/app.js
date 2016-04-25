@@ -1,4 +1,4 @@
-angular.module('starter', ['ionic','chart.js', 'starter.controllers', 'starter.config'])
+angular.module('starter', ['ionic','chart.js', 'starter.controllers', 'starter.config', 'iu'])
 .run(function($ionicPlatform, OAuthFinish) {
   OAuthFinish.checkToken();
   $ionicPlatform.ready(function() {
