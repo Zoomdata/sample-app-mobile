@@ -18,8 +18,7 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
                                        $q, OAuthSupport, Charts, settings, visuals, windowSize) {
   var play;
 
-  var fillDashboard = function() {
-    $scope.visuals = visuals;
+  var fillDashboard = function(lastStep) {
     var barPromise = Charts.fillRTSBar();
     var piePromise = Charts.fillRTSPie();
     var trendPromise = Charts.fillRTSTrend();
@@ -29,32 +28,18 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
     .then(function(data) {
         visuals[4].config.zd_data_status = 'ready';
         visuals[4].config.version++;
-        // workaround as charts.js cannot render more than one chart update at the same time
-        delayed( function() {
-          visuals[2].config.zd_data_status = 'ready';
-          visuals[2].config.version++;
-        }, 1)
-        .then(
-          delayed( function() {
-            visuals[0].config.zd_data_status = 'ready';
-            visuals[0].config.version++;
-          }, 1)
-        )
-        .then(
-          delayed( function() {
-            visuals[1].config.zd_data_status = 'ready';
-            visuals[1].config.version++;
-          }, 1)
-        )
-        .then(function() {
-            visuals[3].config.zd_data_status = 'ready';
-            visuals[3].config.version++;
-          }
-        )
-        .then(function() {
-            togglePlay();
-          }
-        );
+        visuals[2].config.zd_data_status = 'ready';
+        visuals[2].config.version++;
+        visuals[0].config.zd_data_status = 'ready';
+        visuals[0].config.version++;
+        visuals[1].config.zd_data_status = 'ready';
+        visuals[1].config.version++;
+        visuals[3].config.zd_data_status = 'ready';
+        visuals[3].config.version++;
+
+        if (lastStep) {
+          lastStep();     
+        }
       }, function(reason) {
         checkFailReason(reason);
       }
@@ -96,42 +81,8 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
     // Don't start playing if the player is already on
     if ( angular.isDefined(play) ) return;
     play = $interval( function() {
-      var barPromise = Charts.fillRTSBar();
-      var piePromise = Charts.fillRTSPie();
-      var trendPromise = Charts.fillRTSTrend();
-      var trendDayPromise = Charts.fillRTSDayTrend();
-      var sentimentPromise = Charts.fillSentimentBars();
-      $q.all([barPromise, piePromise, trendPromise, trendDayPromise, sentimentPromise])
-      .then(function(newData) {
-          visuals[0].config.zd_data_status = 'ready';
-          visuals[0].config.version++;
-          delayed( function() {
-            visuals[1].config.zd_data_status = 'ready';
-            visuals[1].config.version++;
-          }, 1)
-          .then(
-            delayed( function() {
-              visuals[2].config.zd_data_status = 'ready';
-              visuals[2].config.version++;
-            }, 1)
-          )
-          .then(
-            delayed( function() {
-              visuals[3].config.zd_data_status = 'ready';
-              visuals[3].config.version++;
-            }, 1)
-          )
-          .then( function() {
-              visuals[4].config.zd_data_status = 'ready';
-              visuals[4].config.version++;
-            }
-          )
-        }, function(reason) {
-          checkFailReason(reason);
-        }
-      );
-
-    }, 6000);
+      fillDashboard();
+    }, 4000);
   }
 
   var stopPlay = function() {
@@ -199,8 +150,10 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
       OAuthSupport.authenticate();
   });
 
+  $scope.visuals = visuals;
+
   // first call to populate data on visualizations
-  fillDashboard();
+  fillDashboard(togglePlay);
 
 })
 
