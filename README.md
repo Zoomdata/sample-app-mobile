@@ -2,14 +2,22 @@
 
 This is a mobile data app example using the Zoomdata v2.2 with its SDK v2.0 to query the Real Time Sales datasource hosted by a Zoomdata instance at pubsdk.zoomdata.com.  It leverages Ionic/Angular as its mobile framework.
 
+
 ## Commands
 
+### Development Environment Setup
 * Node js is a pre-requisite
+* Ionic and dependencies
+```
+  447  sudo npm install -g ionic
+  452  sudo npm install -g cordova
+  453  sudo npm install -g ios-sim
+  454  sudo npm install -g ios-deploy
+```
 * Install the Ionic CLI
 ```
 	npm install -g ionic
 ```
-* Clone this repo
 * Install the cordova-plugin-screen-orientation plugin.  Reference: https://github.com/gbenvenuti/cordova-plugin-screen-orientation
 ```
 	cordova plugin add cordova-plugin-screen-orientation
@@ -18,6 +26,7 @@ This is a mobile data app example using the Zoomdata v2.2 with its SDK v2.0 to q
 ```
 	cordova plugin add cordova-plugin-inappbrowser
 ```
+* Clone this repo
 * Start the ionic client tool
 ```
 	ionic serve
@@ -33,3 +42,9 @@ ionic emulate ios --target=iPad-Air
 ```
 
 Reference: http://ionicframework.com/docs/overview/#download
+
+### Production Deployment
+
+* Open the www/js/app.js file and set the "production" constant to "true" at the end of the file
+* Copy all contents of the www folder to your web server or follow normal instructions to deploy on GitHub Pages
+* Try it out! This application is currently deployed at http://demos.zoomdata.com/zd-mobile-app-02
