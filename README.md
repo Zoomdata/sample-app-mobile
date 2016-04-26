@@ -9,10 +9,10 @@ This is a mobile data app example using the Zoomdata v2.2 with its SDK v2.0 to q
 * Node js is a pre-requisite
 * Ionic and dependencies
 ```
-  447  sudo npm install -g ionic
-  452  sudo npm install -g cordova
-  453  sudo npm install -g ios-sim
-  454  sudo npm install -g ios-deploy
+  sudo npm install -g ionic
+  sudo npm install -g cordova
+  sudo npm install -g ios-sim
+  sudo npm install -g ios-deploy
 ```
 * Install the Ionic CLI
 ```
@@ -47,4 +47,4 @@ Reference: http://ionicframework.com/docs/overview/#download
 
 * Open the www/js/app.js file and set the "production" constant to "true" at the end of the file
 * Copy all contents of the www folder to your web server or follow normal instructions to deploy on GitHub Pages
-* Try it out! This application is currently deployed at http://demos.zoomdata.com/zd-mobile-app-02
+* Try it out! This application is currently deployed at http://demos.zoomdata.com/zd-mobile-app-02.  Credentials: admin/Z00MDA1A
