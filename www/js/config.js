@@ -187,10 +187,136 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 	width: null,		// dynamically calculated
 	height: null		// dynamically calculated
 })
-.constant('visuals', [
-	{
-		title: 'Sales by Category - Rolling Hour',
-		type: 'bar',
+.constant('visualizations', {
+	groupedBars: {
+		title: null,
+		config: {
+			zd_data_status: 'not_ready',
+			zd_height: null,
+			zd_width: null,
+		    version: 1,
+			tooltip: {
+				formatter: function (params) {
+				  return params[0] + '<br/>'
+				         + params[1] + ' : ' + numeral(params.value).format('0.000') + '<br/>';
+				}
+			},
+			legend: {
+				show: true,
+				y: 'top'
+			},
+		    toolbox: {
+		      show: false
+		    },
+			grid: {
+				x: 50,
+				y: 30,
+				x2: 20,
+				y2: 23
+			},
+			stack: false,
+		    padding: 0,
+		    calculable: false,
+		    xAxis: [
+		      {
+		        type: 'category',
+		        axisLine: {show: true},
+		        data: []
+		      }
+		    ],
+		    yAxis: [
+		      {
+		        type: 'value',
+		        axisLine: {show: true},
+		        splitArea: {show: true}
+		      }
+		    ],
+		    series: [
+		      {
+		        name: '',
+		        type:'bar',
+		        smooth: true,
+		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
+		        data: []
+		      },
+		      {
+		        name: '',
+				type:'bar',
+		        smooth: true,
+		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
+		        data: []
+		      }
+		    ]
+		  }
+	},
+	trend: {
+		title: null,
+		config: {
+			zd_data_status: 'not_ready',
+			zd_height: null,
+			zd_width: null,
+		    version: 1,
+		    color: ['#fdc086','#386cb0'], 
+		    tooltip: {
+		      	trigger: 'axis',
+				formatter: function (params) {
+					return params[0][1] + '<br/>'
+					     + params[0][0] + ' : ' + numeral(params[0].value).format('$0,000.') + '<br/>'
+					     + params[1][0] + ' : ' + numeral(params[1].value).format('$0,000.') + '<br/>';
+				}
+		    },
+		    legend: {
+		      data: [],
+		      y: 'top'
+		    },
+		    toolbox: {
+		      show: false
+		    },
+		    grid: {
+	            x: 50,
+	            y: 30,
+	            x2: 28,
+	            y2: 23
+		    },
+		    padding: 0,
+		    calculable: false,
+		    xAxis: [
+		      {
+		        type: 'category',
+		        data: []
+		      }
+		    ],
+		    yAxis: [
+		      {
+		        type: 'value',
+		        splitArea: {show: true},
+		        axisLabel: {
+		        	formatter: function (params) {
+						return numeral(params).format('$0,000.');
+					}
+		        }
+		      }
+		    ],
+		    series: [
+		      {
+		        name: '',
+		        type: 'line',
+		        smooth: true,
+		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
+		        data: []
+		      },
+		      {
+		        name: '',
+		        type: 'line',
+		        smooth: true,
+		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
+		        data: []
+		      }
+		    ]
+		  }
+	},
+	bars: {
+		title: null,
 		config: {
 			zd_data_status: 'not_ready',
 			zd_height: null,
@@ -253,9 +379,8 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		    ]
 		}
 	},
-	{
-		title: 'Transactions by Group - Today',
-		type: 'pie',
+	pie: {
+		title: null,
 		config: {
 			zd_data_status: 'not_ready',
 			zd_height: null,
@@ -286,205 +411,8 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		        }
 		    ]
 		}
-	},
-	{
-		title: 'Actual vs. Planned - Rolling Hour',
-		type: 'line',
-		config: {
-			zd_data_status: 'not_ready',
-			zd_height: null,
-			zd_width: null,
-		    version: 1,
-		    color: ['#fdc086','#386cb0'], 
-		    tooltip: {
-		      	trigger: 'axis',
-				formatter: function (params) {
-					return params[0][1] + '<br/>'
-					     + params[0][0] + ' : ' + numeral(params[0].value).format('$0,000.') + '<br/>'
-					     + params[1][0] + ' : ' + numeral(params[1].value).format('$0,000.') + '<br/>';
-				}
-		    },
-		    legend: {
-		      data: [],
-		      y: 'top'
-		    },
-		    toolbox: {
-		      show: false
-		    },
-		    grid: {
-	            x: 50,
-	            y: 30,
-	            x2: 28,
-	            y2: 23
-		    },
-		    padding: 0,
-		    calculable: false,
-		    xAxis: [
-		      {
-		        type: 'category',
-		        data: []
-		      }
-		    ],
-		    yAxis: [
-		      {
-		        type: 'value',
-		        splitArea: {show: true},
-		        axisLabel: {
-		        	formatter: function (params) {
-						return numeral(params).format('$0,000.');
-					}
-		        }
-		      }
-		    ],
-		    series: [
-		      {
-		        name: '',
-		        type: 'line',
-		        smooth: true,
-		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
-		        data: []
-		      },
-		      {
-		        name: '',
-		        type: 'line',
-		        smooth: true,
-		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
-		        data: []
-		      }
-		    ]
-		  }
-	},
-	{
-		title: 'Actual vs. Planned - Rolling 7 Days',
-		type: 'line',
-		config: {
-			zd_data_status: 'not_ready',
-			zd_height: null,
-			zd_width: null,
-		    version: 1,
-		    color: ['#fdc086','#386cb0'], 
-		    tooltip: {
-		      	trigger: 'axis',
-				formatter: function (params) {
-					return params[0][1] + '<br/>'
-					     + params[0][0] + ' : ' + numeral(params[0].value).format('$0,000.') + '<br/>'
-					     + params[1][0] + ' : ' + numeral(params[1].value).format('$0,000.') + '<br/>';
-				}
-		    },
-		    legend: {
-		      data: [],
-		      y: 'top'
-		    },
-		    toolbox: {
-		      show: false
-		    },
-		    grid: {
-	            x: 45,
-	            y: 30,
-	            x2: 28,
-	            y2: 23
-		    },
-		    padding: 0,
-		    calculable: false,
-		    xAxis: [
-		      {
-		        type: 'category',
-		        data: []
-		      }
-		    ],
-		    yAxis: [
-		      {
-		        type: 'value',
-		        splitArea: {show: true},
-		        axisLabel: {
-		        	formatter: function (params) {
-						return numeral(params).format('$0,000.');
-					}
-		        }
-		      }
-		    ],
-		    series: [
-		      {
-		        name: '',
-		        type: 'line',
-		        smooth: true,
-		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
-		        data: []
-		      },
-		      {
-		        name: '',
-		        type: 'line',
-		        smooth: true,
-		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
-		        data: []
-		      }
-		    ]
-		  }
-	},
-	{
-		title: 'Avg Satisfaction - Rolling Hour',
-		type: 'bar',
-		config: {
-			zd_data_status: 'not_ready',
-			zd_height: null,
-			zd_width: null,
-		    version: 1,
-			tooltip: {
-				formatter: function (params) {
-				  return params[0] + '<br/>'
-				         + params[1] + ' : ' + numeral(params.value).format('0.000') + '<br/>';
-				}
-			},
-			legend: {
-				show: true,
-				y: 'top'
-			},
-		    toolbox: {
-		      show: false
-		    },
-			grid: {
-				x: 50,
-				y: 30,
-				x2: 20,
-				y2: 23
-			},
-			stack: false,
-		    padding: 0,
-		    calculable: false,
-		    xAxis: [
-		      {
-		        type: 'category',
-		        axisLine: {show: true},
-		        data: []
-		      }
-		    ],
-		    yAxis: [
-		      {
-		        type: 'value',
-		        axisLine: {show: true},
-		        splitArea: {show: true}
-		      }
-		    ],
-		    series: [
-		      {
-		        name: '',
-		        type:'bar',
-		        smooth: true,
-		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
-		        data: []
-		      },
-		      {
-		        name: '',
-				type:'bar',
-		        smooth: true,
-		        itemStyle: {normal: {areaStyle: {type: 'default'}}},
-		        data: []
-		      }
-		    ]
-		  }
 	}
-	])
-
+})
 .factory('OAuthSupport', function($q, $cordovaOauth, serverConfig, redirect, production) {
 	var o = {};
 	o.authenticate = function() {
