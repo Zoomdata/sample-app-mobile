@@ -4,96 +4,25 @@
     <p>
       {{dash.lastText}}
     </p>
-
-    <div class="card">
-		<div class="item item-divider">{{visuals[4].title}}
-			<a class="item-icon-right" href="#/tab/dash/{{dash.id}}/4">
-				<i class="icon ion-ios-arrow-forward"></i>
-			</a>
-		</div>
-		<div ng-switch on="visuals[4].config.zd_data_status">
-			<div ng-switch-when="ready">
-				<div data-iu-chart="visuals[4].config" class="iuChart" 
-					ng-style="style(windowSize)">
+	<div ng-repeat="visual in dash.visuals">
+	    <div class="card">
+			<div class="item item-divider">{{visual.title}}
+				<a class="item-icon-right" href="#/tab/dash/{{dash.id}}/{{visual.id}}">
+					<i class="icon ion-ios-arrow-forward"></i>
+				</a>
+			</div>
+			<div ng-switch on="visual.config.zd_data_status">
+				<div ng-switch-when="ready">
+					<div data-iu-chart="visual.config" class="iuChart" 
+						ng-style="style(windowSize)">
+					</div>
+				</div>
+				<div ng-switch-when="not_ready">
+					<div style="height: 160px"></div>
 				</div>
 			</div>
-			<div ng-switch-when="not_ready">
-				<div style="height: 160px"></div>
-			</div>
-		</div>
-    </div>
+	    </div>
+	</div>
 
-    <div class="card">
-		<div class="item item-divider">{{visuals[2].title}}
-			<a class="item-icon-right" href="#/tab/dash/{{dash.id}}/2">
-				<i class="icon ion-ios-arrow-forward"></i>
-			</a>
-		</div>
-		<div ng-switch on="visuals[2].config.zd_data_status">
-			<div ng-switch-when="ready">
-				<div data-iu-chart="visuals[2].config" class="iuChart" 
-					ng-style="style(windowSize)">
-				</div>
-			</div>
-			<div ng-switch-when="not_ready">
-				<div style="height: 160px"></div>
-			</div>
-		</div>
-    </div>
-
-    <div class="card">
-		<div class="item item-divider">{{visuals[0].title}}
-			<a class="item-icon-right" href="#/tab/dash/{{dash.id}}/0">
-				<i class="icon ion-ios-arrow-forward"></i>
-			</a>
-		</div>
-		<div ng-switch on="visuals[0].config.zd_data_status">
-			<div ng-switch-when="ready">
-				<div data-iu-chart="visuals[0].config" class="iuChart" 
-					ng-style="style(windowSize)">
-				</div>
-			</div>
-			<div ng-switch-when="not_ready">
-				<div style="height: 160px"></div>
-			</div>
-		</div>
-    </div>
-
-    <div class="card">
-		<div class="item item-divider">{{visuals[1].title}}
-			<a class="item-icon-right" href="#/tab/dash/{{dash.id}}/1">
-				<i class="icon ion-ios-arrow-forward"></i>
-			</a>
-		</div>
-		<div ng-switch on="visuals[1].config.zd_data_status">
-			<div ng-switch-when="ready">
-				<div data-iu-chart="visuals[1].config" class="iuChart" 
-					ng-style="style(windowSize)">
-				</div>
-			</div>
-			<div ng-switch-when="not_ready">
-				<div style="height: 160px"></div>
-			</div>
-		</div>
-    </div>
-
-    <div class="card">
-		<div class="item item-divider">{{visuals[3].title}}
-			<a class="item-icon-right" href="#/tab/dash/{{dash.id}}/3">
-				<i class="icon ion-ios-arrow-forward"></i>
-			</a>
-		</div>
-		<div ng-switch on="visuals[3].config.zd_data_status">
-			<div ng-switch-when="ready">
-				<div data-iu-chart="visuals[3].config" class="iuChart" 
-					ng-style="style(windowSize)">
-				</div>
-			</div>
-			<div ng-switch-when="not_ready">
-				<div style="height: 160px"></div>
-			</div>
-		</div>
-    </div>
-	
   </ion-content>
 </ion-view>

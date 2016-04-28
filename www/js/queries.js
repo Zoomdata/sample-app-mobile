@@ -49,6 +49,10 @@ angular.module('starter.queries', ['starter.config'])
 	o.queryDaySalesTrend = o.genericQuery(queryConfig.salesDayTrendQuery);
 	o.querySentiment = o.genericQuery(queryConfig.sentimentByGroupQuery);
 
+	o.queryLendingClubTrend = o.genericQuery(queryConfig.lendingClubTrendQuery);
+	o.queryLendingClubByGrade = o.genericQuery(queryConfig.lendingClubByGradeQuery);
+	o.queryLendingClubByState = o.genericQuery(queryConfig.lendingClubByStateQuery);
+
 	var buildEndpoint = function(service) {
 		var protocol = serverConfig.application.secure ? 'https' : 'http';
 		var hostname = serverConfig.application.host;

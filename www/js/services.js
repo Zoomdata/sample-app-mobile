@@ -13,40 +13,68 @@ angular.module('starter.services', ['starter.queries','starter.config'])
       name: 'Real Time Sales',
       lastText: 'Continuously generated sales data',
       face: 'img/rts.png',
+      continuosUpdate: true,
+      updateRate: 4000,
       visuals: [
         {
-          title: 'Sales by Category - Rolling Hour',
-          config: null      
-        }, 
-        {
-          title: 'Transactions by Group - Today',
+          id: 0,
+          title: 'Avg Satisfaction - Rolling Hour',
           config: null
-        }, 
+        },
         {
+          id: 1,
           title: 'Actual vs. Planned - Rolling Hour',
           config: null
         }, 
         {
-          title: 'Actual vs. Planned - Rolling 7 Days',
-          config: null       
+          id: 2,
+          title: 'Sales by Category - Rolling Hour',
+          config: null      
         }, 
         {
-          title: 'Avg Satisfaction - Rolling Hour',
+          id: 3,
+          title: 'Transactions by Group - Today',
           config: null
-        }],
+        },
+        {
+          id: 4,
+          title: 'Actual vs. Planned - Rolling 7 Days',
+          config: null       
+        }
+      ],
       functions: []
     }, {
       id: 1,
-      name: 'Fusion Dashboard',
-      lastText: 'Multi-source ticket marketplace fusion',
-      face: 'img/fusion.png',
-      visuals: [],
+      name: 'Peer Lending',
+      lastText: 'Default Propensity Analysis',
+      face: 'img/securities.png',
+      continuosUpdate: false,
+      updateRate: -1,
+      visuals: [
+        {
+          id: 0,
+          title: 'Number of Loans by State',
+          config: null
+        },
+        {
+          id: 1,
+          title: 'Total Payment vs Loan Amount',
+          config: null
+        },
+        {
+          id: 2,
+          title: 'Loans by Grade',
+          config: null
+        }
+      ],
       functions: []
     }, {
       id: 2,
-      name: 'Securities Analysis',
-      lastText: 'Stock ticker data analysis',
-      face: 'img/securities.png',
+      name: 'Fusion Dashboard',
+      lastText: 'Multi-source ticket marketplace fusion',
+      face: 'img/fusion.png',
+      continuosUpdate: false,
+      updateRate: -1,
       visuals: [],
       functions: []
     }]
@@ -60,23 +88,80 @@ angular.module('starter.services', ['starter.queries','starter.config'])
         o.fillRTSPie,
         o.fillRTSDayTrend
     ];
+    o.dashboards[1].functions = [
+        o.fillLCLoansByState,
+        o.fillLCTrend,
+        o.fillLCLoansByGrade
+    ]
   }
 
-  var prepareVisual = function(dashId, visId, visType) {
-      var visual = o.dashboards[dashId].visuals[visId];
-      if (!visual.config) {
-        // visuals[visId].config should become pie.config, bar.config, etc.
-        // maybe passed as a parameter
-        visual.config = angular.copy(visualizations[visType].config);
-      }
-      visual.config.zd_height = windowSize.height;
-      visual.config.zd_width = windowSize.width;   
+  o.fillLCLoansByState = function() {
+      var visual = prepareVisual(1, 0, 'treeMap');
+      var processData = function(queryData) {
+        console.log(queryData);
+        var propensity = queryData.map(function(item) {
+          return +item.current.metrics.calc_default_propensity.calc.toFixed(2);
+        });
 
-      return visual; 
+        var data = queryData.map(function(item) {
+          return {value: item.current.count, name: item.group[0]};
+        });
+
+        visual.config.series[0].data = data;
+
+        return visual.config;
+      };
+
+      return ZDAccess.queryLendingClubByState(processData);
+  }
+
+  o.fillLCTrend = function() {
+    var visual = prepareVisual(1, 1, 'trend');
+    var processData = function(queryData) {
+        var totalPmt = queryData.map(function(item) {
+            return item.current.metrics.total_pymnt.sum.toFixed(0);
+        });
+        var loanAmt = queryData.map(function(item) {
+            return item.current.metrics.loan_amnt.sum.toFixed(0);
+        });
+
+        var labels = queryData.map(function(item, index) {
+            var currentTime = moment(item.group[0],'YYYY-MM-DD HH:mm:ss');
+            return currentTime.format('MM/DD/YYYY');
+        }); 
+
+        visual.config.series[0].name = 'Total Payment';
+        visual.config.series[1].name = 'Loan Amount';
+        visual.config.legend.data = [visual.config.series[0].name, visual.config.series[1].name];
+        visual.config.series[0].data = totalPmt;
+        visual.config.series[1].data = loanAmt;
+        visual.config.xAxis[0].data = labels;
+        visual.config.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
+
+        return visual.config;
+    }
+
+    return ZDAccess.queryLendingClubTrend(processData);    
+  }
+
+  o.fillLCLoansByGrade = function() {
+      var visual = prepareVisual(1, 2, 'pie');
+
+      var processData = function(queryData) {
+        var data = queryData.map(function(item) {
+          return {value: item.current.count, name: item.group[0]};
+        });
+        visual.config.series[0].name = 'Loans by Grade';
+        visual.config.series[0].data = data;
+
+        return visual.config;
+      };
+
+      return ZDAccess.queryLendingClubByGrade(processData);  
   }
 
   o.fillRTSPie = function() {
-      var visual = prepareVisual(0, 1, 'pie');
+      var visual = prepareVisual(0, 3, 'pie');
 
       var processData = function(queryData) {
         var data = queryData.map(function(item) {
@@ -93,7 +178,7 @@ angular.module('starter.services', ['starter.queries','starter.config'])
   }
 
   o.fillRTSBar = function() {
-      var visual = prepareVisual(0, 0, 'bars');
+      var visual = prepareVisual(0, 2, 'bars');
       var processData = function(queryData) {
         var data  = queryData.map(function(item) {
           return item.current.count;
@@ -127,7 +212,7 @@ angular.module('starter.services', ['starter.queries','starter.config'])
   }
 
   o.fillRTSTrend = function() {
-    var visual = prepareVisual(0, 2, 'trend');
+    var visual = prepareVisual(0, 1, 'trend');
     var processData = function(queryData) {
         var sales = queryData.map(function(item) {
             return item.current.metrics.price.sum.toFixed(0);
@@ -156,7 +241,7 @@ angular.module('starter.services', ['starter.queries','starter.config'])
   }
 
   o.fillRTSDayTrend = function() {
-      var visual = prepareVisual(0, 3, 'trend');
+      var visual = prepareVisual(0, 4, 'trend');
       var processData = function(queryData) {
           var sales = queryData.map(function(item) {
               return item.current.metrics.price.sum.toFixed(0);
@@ -185,7 +270,7 @@ angular.module('starter.services', ['starter.queries','starter.config'])
   }
 
   o.fillRTSSentimentBars = function() {
-    var visual = prepareVisual(0, 4, 'groupedBars');
+    var visual = prepareVisual(0, 0, 'groupedBars');
     var processData = function(queryData) {
       var data = reduceTwoDimResult(queryData);
       visual.config.series[0].name = data[0].name;
@@ -210,6 +295,19 @@ angular.module('starter.services', ['starter.queries','starter.config'])
     }
 
     return ZDAccess.querySentiment(processData);
+  }
+
+  var prepareVisual = function(dashId, visId, visType) {
+      var visual = o.dashboards[dashId].visuals[visId];
+      if (!visual.config) {
+        // visuals[visId].config should become pie.config, bar.config, etc.
+        // maybe passed as a parameter
+        visual.config = angular.copy(visualizations[visType].config);
+      }
+      visual.config.zd_height = windowSize.height;
+      visual.config.zd_width = windowSize.width;   
+
+      return visual; 
   }
 
   var bigMoneyFormatter = function (v) {

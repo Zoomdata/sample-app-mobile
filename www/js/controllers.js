@@ -23,7 +23,6 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
     var promises = dashFunctions.map(function(f) {
       return f.call(Charts);
     })
-
     $q.all(promises)
     .then(function(visConfigs) {
         visConfigs.map(function(visConfig) {
@@ -60,7 +59,8 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
   }
       
   var togglePlay = function() {
-    if (settings.continuousUpdate) {
+    if (settings.continuousUpdate && 
+        $scope.dash.continuosUpdate) {
       startPlay();
     } else {
       stopPlay();
@@ -75,8 +75,8 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
     // Don't start playing if the player is already on
     if ( angular.isDefined(play) ) return;
     play = $interval( function() {
-      fillDashboard($scope.dash);
-    }, 4000);
+            fillDashboard($scope.dash);
+          }, $scope.dash.updateRate);
   }
 
   var stopPlay = function() {

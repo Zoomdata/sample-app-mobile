@@ -177,6 +177,85 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		         func: 'avg'
 		       }]
 		    }
+		},
+		lendingClubTrendQuery: {
+			source: 'Lending Club Loans Data',
+			cfg: {
+			    tz: 'EST',
+			    filters: [],
+			    player: null,
+			    time: {
+			      timeField: "issue_d"
+			    },
+			    groups: [{
+			        name: '$to_day(issue_d)',
+			        limit: 1000,
+			        sort: {
+			            dir: 'asc',
+			            name: 'issue_d'
+			          }
+			      }
+			    ],
+			    metrics: [
+			          {
+			            name: 'total_pymnt',
+			            func: 'sum'
+			          },
+			          {
+			            name: 'loan_amnt',
+			            func: 'sum'
+			          }
+			    ]
+			}
+		},
+		lendingClubByGradeQuery: {
+			source: 'Lending Club Loans Data',
+			cfg: {
+			    tz: 'EST',
+			    filters: [],
+			    player: null,
+			    time: {
+			      from: '+2015-01-15 00:00:00.000',
+			      to: '+2015-06-15 00:00:00.000',
+			      timeField: "issue_d"
+			    },
+			    groups: [{
+			        name: 'grade',
+			        limit: 50,
+			        sort: {
+			            dir: 'asc',
+			            name: 'grade'
+			          }
+			      }
+			    ],
+			    metrics: [
+			    ]
+			}
+		},
+		lendingClubByStateQuery: {
+			source: 'Lending Club Loans Data',
+			cfg: {
+			    tz: 'EST',
+			    filters: [],
+			    player: null,
+			    time: {
+			      timeField: "issue_d"
+			    },
+			    groups: [{
+			        name: 'addr_state',
+			        limit: 100,
+			        sort: {
+			            dir: 'desc',
+			            name: 'count'
+			          }
+			      }
+			    ],
+			    metrics: [{
+			            name: 'calc_default_propensity',
+			            func: 'calc'
+			        }
+			    ]
+			}
 		}
 })
 .constant('settings', {
@@ -410,6 +489,44 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		            data:[]
 		        }
 		    ]
+		}
+	},
+	treeMap: {
+		title: null,
+		config: {
+			zd_data_status: 'not_ready',
+			zd_height: null,
+			zd_width: null,
+		    version: 1,
+		    tooltip : {
+		        trigger: 'item',
+		        formatter: "{b} <br/>number of loans: {c}"
+		    },
+		    toolbox: {
+		        show : false
+		    },
+		    calculable : false,
+		    series : [
+		        {
+		            name:'',
+		            type:'treemap',
+		            itemStyle: {
+		                normal: {
+		                    label: {
+		                        show: true,
+		                        formatter: "{b}"
+		                    },
+		                    borderWidth: 1
+		                },
+		                emphasis: {
+		                    label: {
+		                        show: true
+		                    }
+		                }
+		            },
+		            data:[]
+		        }
+		    ]		
 		}
 	}
 })
