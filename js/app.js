@@ -1,6 +1,8 @@
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.config', 'iu'])
-.run(function($ionicPlatform, OAuthFinish) {
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.config', 'iu'])
+.run(function($ionicPlatform, OAuthFinish, Charts) {
   OAuthFinish.checkToken();
+  Charts.calcWidgetSize();
+  Charts.initDashboards();
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -46,7 +48,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.config', 'iu
     }
   })
 
-  .state('tab.dash', {
+  .state('tab.dash-list', {
     url: '/dash',
     views: {
       'tab-dash': {
@@ -56,7 +58,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.config', 'iu
     }
   })
 
-  .state('tab.dash-detail', {
+  .state('tab.dash', {
     url: '/dash/:dashId',
     views: {
       'tab-dash': {
@@ -65,8 +67,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.config', 'iu
       }
     }
   })
-  .state('tab.dash-gbar', {
-    url: '/dash/sviz/:chartId',
+  .state('tab.chart', {
+    url: '/dash/:dashId/:chartId',
     views: {
       'tab-dash': {
         templateUrl: 'templates/dash-single-viz.html',

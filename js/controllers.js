@@ -15,27 +15,20 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
 })
 
 .controller('DashDetailCtrl', function($window, $scope, $state, $timeout, $interval, $stateParams, 
-                                       $q, OAuthSupport, Charts, settings, visuals, windowSize) {
+                                       $q, OAuthSupport, Charts, settings, windowSize) {
   var play;
 
-  var fillDashboard = function(lastStep) {
-    var barPromise = Charts.fillRTSBar();
-    var piePromise = Charts.fillRTSPie();
-    var trendPromise = Charts.fillRTSTrend();
-    var trendDayPromise = Charts.fillRTSDayTrend();
-    var sentimentPromise = Charts.fillSentimentBars();
-    $q.all([barPromise, piePromise, trendPromise, trendDayPromise, sentimentPromise])
-    .then(function(data) {
-        visuals[4].config.zd_data_status = 'ready';
-        visuals[4].config.version++;
-        visuals[2].config.zd_data_status = 'ready';
-        visuals[2].config.version++;
-        visuals[0].config.zd_data_status = 'ready';
-        visuals[0].config.version++;
-        visuals[1].config.zd_data_status = 'ready';
-        visuals[1].config.version++;
-        visuals[3].config.zd_data_status = 'ready';
-        visuals[3].config.version++;
+  var fillDashboard = function(dashboard, lastStep) {
+    var dashFunctions = dashboard.functions;
+    var promises = dashFunctions.map(function(f) {
+      return f.call(Charts);
+    })
+    $q.all(promises)
+    .then(function(visConfigs) {
+        visConfigs.map(function(visConfig) {
+          visConfig.zd_data_status = 'ready';
+          visConfig.version++;
+        }); 
 
         if (lastStep) {
           lastStep();     
@@ -66,7 +59,8 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
   }
       
   var togglePlay = function() {
-    if (settings.continuousUpdate) {
+    if (settings.continuousUpdate && 
+        $scope.dash.continuosUpdate) {
       startPlay();
     } else {
       stopPlay();
@@ -81,8 +75,8 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
     // Don't start playing if the player is already on
     if ( angular.isDefined(play) ) return;
     play = $interval( function() {
-      fillDashboard();
-    }, 4000);
+            fillDashboard($scope.dash);
+          }, $scope.dash.updateRate);
   }
 
   var stopPlay = function() {
@@ -91,29 +85,6 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
       play = undefined;
     }
   };
-
-  $scope.sentimentOptions = {
-    scaleLabel : function (label) {
-      var v = label.value;
-      result = numeral(v).format('0.000');
-      return result;
-    },
-    showTooltips: true,
-    scaleBeginAtZero: false,
-    responsive: true,
-    multiTooltipTemplate : function (label) {
-      var v = label.value;
-      return label.datasetLabel + ': ' + numeral(v).format('0.000');
-    }
-  };
-
-  $scope.transactPieOptions = {
-    tooltipTemplate : function (label) {
-      var v = label.value;
-      return label.label + ': ' + numeral(v).format('0,000');
-    },
-    showTooltips: true
-  }
 
   $scope.$on("continuousUpdateChanged", function (event, args) {
     togglePlay();
@@ -124,8 +95,6 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
     stopPlay();
     angular.element($window).off('resize', onResize);
   });
-
-  $scope.dash = Charts.getDashboard($stateParams.dashId);
 
   $scope.onClick = function (points, evt) {
     // test to capture onClick event for trends.  See templates/dash-detail.html
@@ -142,6 +111,7 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
       return { 'height': windowSize.height + 'px', 'width':  windowSize.width + 'px'};
   }
   Charts.calcWidgetSize();
+
   $scope.windowSize = windowSize;
   angular.element($window).bind('resize', onResize);
 
@@ -150,16 +120,19 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
       OAuthSupport.authenticate();
   });
 
-  $scope.visuals = visuals;
+  $scope.dash = Charts.getDashboard($stateParams.dashId);
+  $scope.visuals = Charts.getVisuals($scope.dash);
 
   // first call to populate data on visualizations
-  fillDashboard(togglePlay);
+  fillDashboard($scope.dash, togglePlay);
 
 })
 
-.controller('DashChartDetailCtrl', function($scope, $stateParams, OAuthSupport, visuals, Charts, windowSize) {
+.controller('DashChartDetailCtrl', function($scope, $stateParams, OAuthSupport, Charts, windowSize) {
   OAuthSupport.authenticate();
-  // places the visual datea on the chart scope
+  // places the visual data on the chart scope
+  var dash = Charts.getDashboard($stateParams.dashId);
+  var visuals = Charts.getVisuals(dash);
   $scope.chart = visuals[$stateParams.chartId];
 
   // resize support

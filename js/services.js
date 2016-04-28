@@ -1,5 +1,5 @@
 angular.module('starter.services', ['starter.queries','starter.config'])
-.factory('Charts', function($window, $state, windowSize, ZDAccess, visuals) {
+.factory('Charts', function($window, $state, windowSize, ZDAccess, visualizations) {
 
   var o = {
     charts: [{
@@ -12,57 +12,173 @@ angular.module('starter.services', ['starter.queries','starter.config'])
       id: 0,
       name: 'Real Time Sales',
       lastText: 'Continuously generated sales data',
-      face: 'img/rts.png'
+      face: 'img/rts.png',
+      continuosUpdate: true,
+      updateRate: 4000,
+      visuals: [
+        {
+          id: 0,
+          title: 'Avg Satisfaction - Rolling Hour',
+          config: null
+        },
+        {
+          id: 1,
+          title: 'Actual vs. Planned - Rolling Hour',
+          config: null
+        }, 
+        {
+          id: 2,
+          title: 'Sales by Category - Rolling Hour',
+          config: null      
+        }, 
+        {
+          id: 3,
+          title: 'Transactions by Group - Today',
+          config: null
+        },
+        {
+          id: 4,
+          title: 'Actual vs. Planned - Rolling 7 Days',
+          config: null       
+        }
+      ],
+      functions: []
     }, {
       id: 1,
-      name: '1 Billion Records',
-      lastText: '1 billion records of sales data',
-      face: 'img/1brts.png'
+      name: 'Peer Lending',
+      lastText: 'Default Propensity Analysis',
+      face: 'img/securities.png',
+      continuosUpdate: false,
+      updateRate: -1,
+      visuals: [
+        {
+          id: 0,
+          title: 'Number of Loans by State',
+          config: null
+        },
+        {
+          id: 1,
+          title: 'Total Payment vs Loan Amount',
+          config: null
+        },
+        {
+          id: 2,
+          title: 'Loans by Grade',
+          config: null
+        }
+      ],
+      functions: []
     }, {
       id: 2,
       name: 'Fusion Dashboard',
       lastText: 'Multi-source ticket marketplace fusion',
-      face: 'img/fusion.png'
-    }, {
-      id: 3,
-      name: 'Hotels Dashboard',
-      lastText: 'Data powered by Cloudera Search',
-      face: 'img/hotels.png'
-    }, {
-      id: 4,
-      name: 'Securities Analysis',
-      lastText: 'Stock ticker data analysis',
-      face: 'img/securities.png'
+      face: 'img/fusion.png',
+      continuosUpdate: false,
+      updateRate: -1,
+      visuals: [],
+      functions: []
     }]
   };
 
-  o.fillRTSPie = function() {
-      var visConfig = visuals[1].config;
-      visConfig.zd_height = windowSize.height;
-      visConfig.zd_width = windowSize.width;
+  o.initDashboards = function() {
+    o.dashboards[0].functions = [
+        o.fillRTSSentimentBars,
+        o.fillRTSTrend,
+        o.fillRTSBar,
+        o.fillRTSPie,
+        o.fillRTSDayTrend
+    ];
+    o.dashboards[1].functions = [
+        o.fillLCLoansByState,
+        o.fillLCTrend,
+        o.fillLCLoansByGrade
+    ]
+  }
+
+  o.fillLCLoansByState = function() {
+      var visual = prepareVisual(1, 0, 'treeMap');
+      var processData = function(queryData) {
+        console.log(queryData);
+        var propensity = queryData.map(function(item) {
+          return +item.current.metrics.calc_default_propensity.calc.toFixed(2);
+        });
+
+        var data = queryData.map(function(item) {
+          return {value: item.current.count, name: item.group[0]};
+        });
+
+        visual.config.series[0].data = data;
+
+        return visual.config;
+      };
+
+      return ZDAccess.queryLendingClubByState(processData);
+  }
+
+  o.fillLCTrend = function() {
+    var visual = prepareVisual(1, 1, 'trend');
+    var processData = function(queryData) {
+        var totalPmt = queryData.map(function(item) {
+            return item.current.metrics.total_pymnt.sum.toFixed(0);
+        });
+        var loanAmt = queryData.map(function(item) {
+            return item.current.metrics.loan_amnt.sum.toFixed(0);
+        });
+
+        var labels = queryData.map(function(item, index) {
+            var currentTime = moment(item.group[0],'YYYY-MM-DD HH:mm:ss');
+            return currentTime.format('MM/DD/YYYY');
+        }); 
+
+        visual.config.series[0].name = 'Total Payment';
+        visual.config.series[1].name = 'Loan Amount';
+        visual.config.legend.data = [visual.config.series[0].name, visual.config.series[1].name];
+        visual.config.series[0].data = totalPmt;
+        visual.config.series[1].data = loanAmt;
+        visual.config.xAxis[0].data = labels;
+        visual.config.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
+
+        return visual.config;
+    }
+
+    return ZDAccess.queryLendingClubTrend(processData);    
+  }
+
+  o.fillLCLoansByGrade = function() {
+      var visual = prepareVisual(1, 2, 'pie');
+
       var processData = function(queryData) {
         var data = queryData.map(function(item) {
           return {value: item.current.count, name: item.group[0]};
         });
-        var visConfig = visuals[1].config;
-        visConfig.series[0].name = 'Product Group';
-        visConfig.series[0].data = data;
+        visual.config.series[0].name = 'Loans by Grade';
+        visual.config.series[0].data = data;
+
+        return visual.config;
+      };
+
+      return ZDAccess.queryLendingClubByGrade(processData);  
+  }
+
+  o.fillRTSPie = function() {
+      var visual = prepareVisual(0, 3, 'pie');
+
+      var processData = function(queryData) {
+        var data = queryData.map(function(item) {
+          return {value: item.current.count, name: item.group[0]};
+        });
+
+        visual.config.series[0].name = 'Product Group';
+        visual.config.series[0].data = data;
+
+        return visual.config;
       };
 
       return ZDAccess.queryProdGroup(processData);
   }
 
-  var truncate = function( string, n ){
-    if(string.length > n) {
-        string = string.substring(0,n-1)+"...";
-    }
-    return string;
-  }
-
   o.fillRTSBar = function() {
-      var visConfig = visuals[0].config;
-      visConfig.zd_height = windowSize.height;
-      visConfig.zd_width = windowSize.width;
+      var visual = prepareVisual(0, 2, 'bars');
       var processData = function(queryData) {
         var data  = queryData.map(function(item) {
           return item.current.count;
@@ -84,20 +200,19 @@ angular.module('starter.services', ['starter.queries','starter.config'])
         });
 
         // populating visualization
-        var visConfig = visuals[0].config;
-        visConfig.series[0].name = 'Product Category';
-        visConfig.series[0].data = sales;
-        visConfig.xAxis[0].data = labels
-        visConfig.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
+        visual.config.series[0].name = 'Product Category';
+        visual.config.series[0].data = sales;
+        visual.config.xAxis[0].data = labels
+        visual.config.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
+
+        return visual.config;
       };
 
       return ZDAccess.queryProdCat(processData);
   }
 
   o.fillRTSTrend = function() {
-    var visConfig = visuals[2].config;
-    visConfig.zd_height = windowSize.height;
-    visConfig.zd_width = windowSize.width;
+    var visual = prepareVisual(0, 1, 'trend');
     var processData = function(queryData) {
         var sales = queryData.map(function(item) {
             return item.current.metrics.price.sum.toFixed(0);
@@ -111,24 +226,22 @@ angular.module('starter.services', ['starter.queries','starter.config'])
             return currentTime.format('HH:mm');
         }); 
 
-        var visConfig = visuals[2].config;
-        visConfig.series[0].name = 'Sales';
-        visConfig.series[1].name = 'Planned Sales';
-        visConfig.legend.data = [visConfig.series[0].name, visConfig.series[1].name];
-        visConfig.series[0].data = sales;
-        visConfig.series[1].data = plannedSales;
-        visConfig.xAxis[0].data = labels;
-        visConfig.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
+        visual.config.series[0].name = 'Sales';
+        visual.config.series[1].name = 'Planned Sales';
+        visual.config.legend.data = [visual.config.series[0].name, visual.config.series[1].name];
+        visual.config.series[0].data = sales;
+        visual.config.series[1].data = plannedSales;
+        visual.config.xAxis[0].data = labels;
+        visual.config.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
+
+        return visual.config;
     }
 
     return ZDAccess.querySalesTrend(processData);
   }
 
   o.fillRTSDayTrend = function() {
-      var visConfig = visuals[3].config;
-      visConfig.zd_height = windowSize.height;
-      visConfig.zd_width = windowSize.width;
-
+      var visual = prepareVisual(0, 4, 'trend');
       var processData = function(queryData) {
           var sales = queryData.map(function(item) {
               return item.current.metrics.price.sum.toFixed(0);
@@ -142,18 +255,59 @@ angular.module('starter.services', ['starter.queries','starter.config'])
               return currentTime.format('MM/DD/YYYY');
           }); 
 
-          var visConfig = visuals[3].config;
+          visual.config.series[0].name = 'Sales';
+          visual.config.series[1].name = 'Planned Sales';
+          visual.config.legend.data = [visual.config.series[0].name, visual.config.series[1].name];
+          visual.config.series[0].data = sales;
+          visual.config.series[1].data = plannedSales;
+          visual.config.xAxis[0].data = labels;
+          visual.config.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
 
-          visConfig.series[0].name = 'Sales';
-          visConfig.series[1].name = 'Planned Sales';
-          visConfig.legend.data = [visConfig.series[0].name, visConfig.series[1].name];
-          visConfig.series[0].data = sales;
-          visConfig.series[1].data = plannedSales;
-          visConfig.xAxis[0].data = labels;
-          visConfig.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
+          return visual.config;
       }
 
       return ZDAccess.queryDaySalesTrend(processData);
+  }
+
+  o.fillRTSSentimentBars = function() {
+    var visual = prepareVisual(0, 0, 'groupedBars');
+    var processData = function(queryData) {
+      var data = reduceTwoDimResult(queryData);
+      visual.config.series[0].name = data[0].name;
+      visual.config.series[1].name = data[1].name;
+      visual.config.legend.data = [data[0].name, data[1].name];
+
+      var labels = data[0].datapoints.map(function(item, index) {
+        return item.x;
+      });
+      var series0 = data[0].datapoints.map(function(item, index) {
+        return item.y;
+      });
+      var series1 = data[1].datapoints.map(function(item, index) {
+        return item.y;
+      });
+      visual.config.series[0].data = series0;
+      visual.config.series[1].data = series1;
+
+      visual.config.xAxis[0].data = labels;
+
+      return visual.config;
+    }
+
+    return ZDAccess.querySentiment(processData);
+  }
+
+  var prepareVisual = function(dashId, visId, visType) {
+      var visual = o.dashboards[dashId].visuals[visId];
+      if (!visual.config) {
+        // visuals[visId].config should become pie.config, bar.config, etc.
+        // maybe passed as a parameter
+        visual.config = angular.copy(visualizations[visType].config);
+      }
+      visual.config.zd_height = windowSize.height;
+      visual.config.zd_width = windowSize.width;   
+
+      return visual; 
   }
 
   var bigMoneyFormatter = function (v) {
@@ -194,36 +348,6 @@ angular.module('starter.services', ['starter.queries','starter.config'])
       return data;  
   }
 
-  o.fillSentimentBars = function() {
-    var visConfig = visuals[4].config;
-    visConfig.zd_height = windowSize.height;
-    visConfig.zd_width = windowSize.width;
-
-    var processData = function(queryData) {
-      var visConfig = visuals[4].config;
-      var data = reduceTwoDimResult(queryData);
-      visConfig.series[0].name = data[0].name;
-      visConfig.series[1].name = data[1].name;
-      visConfig.legend.data = [data[0].name, data[1].name];
-
-      var labels = data[0].datapoints.map(function(item, index) {
-        return item.x;
-      });
-      var series0 = data[0].datapoints.map(function(item, index) {
-        return item.y;
-      });
-      var series1 = data[1].datapoints.map(function(item, index) {
-        return item.y;
-      });
-      visConfig.series[0].data = series0;
-      visConfig.series[1].data = series1;
-
-      visConfig.xAxis[0].data = labels;
-    }
-
-    return ZDAccess.querySentiment(processData);
-  }
-
   o.all = function() {
     return o.charts;
   }
@@ -258,8 +382,11 @@ angular.module('starter.services', ['starter.queries','starter.config'])
     return null;
   }
 
+  o.getVisuals = function(dash) {
+    return dash.visuals;
+  }
+
   o.logout = function() {
-    // return ZDAccess.logout();
     ZDAccess.logout().then(function(response) {
         console.log(response);
       }
