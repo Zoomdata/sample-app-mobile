@@ -559,8 +559,8 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		                    }
 		                }
 		            },
-		            radius : '55%',
-		            center: ['50%', '60%'],
+		            radius : '74%',
+		            center: ['50%', '55%'],
 		            data:[]
 		        }
 		    ]
