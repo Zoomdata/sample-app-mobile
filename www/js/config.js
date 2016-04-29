@@ -256,6 +256,85 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 			        }
 			    ]
 			}
+		},
+		ticketSalesByStateQuery: {
+			source: 'Ticket Sales',
+			cfg: {
+			    tz: 'EST',
+			    filters: [],
+			    player: null,
+			    time: {
+			      timeField: "saletime"
+			    },
+			    groups: [{
+			        name: 'state',
+			        limit: 100,
+			        sort: {
+			            dir: 'asc',
+			            name: 'state'
+			          }
+			      }
+			    ],
+			    metrics: [{
+			            name: 'pricepaid',
+			            func: 'sum'
+			        }
+			    ]
+			}			
+		},
+		ticketQuantityTrendQuery: {
+			source: 'Ticket Sales',
+			cfg: {
+			    tz: 'EST',
+			    filters: [],
+			    player: null,
+			    time: {
+			      timeField: "saletime"
+			    },
+			    groups: [{
+			        name: '$to_day(saletime)',
+			        limit: 1000,
+			        sort: {
+			            dir: 'asc',
+			            name: 'saletime'
+			          }
+			      }
+			    ],
+			    metrics: [{
+			            name: 'qtysold',
+			            func: 'sum'
+			        }
+			    ]
+			}			
+		},
+		ticketPriceCommission: {
+			source: 'Ticket Sales',
+			cfg: {
+			    tz: 'EST',
+			    filters: [],
+			    player: null,
+			    time: {
+			      timeField: "saletime"
+			    },
+			    groups: [{
+			        name: '$to_month(saletime)',
+			        limit: 1000,
+			        sort: {
+			            dir: 'asc',
+			            name: 'saletime'
+			          }
+			      }
+			    ],
+			    metrics: [{
+			            name: 'pricepaid',
+			            func: 'sum'
+			        },
+			        {
+			            name: 'commission',
+			            func: 'sum'
+			        }
+			    ]
+			}			
 		}
 })
 .constant('settings', {
@@ -338,11 +417,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		    color: ['#fdc086','#386cb0'], 
 		    tooltip: {
 		      	trigger: 'axis',
-				formatter: function (params) {
-					return params[0][1] + '<br/>'
-					     + params[0][0] + ' : ' + numeral(params[0].value).format('$0,000.') + '<br/>'
-					     + params[1][0] + ' : ' + numeral(params[1].value).format('$0,000.') + '<br/>';
-				}
+				formatter: null
 		    },
 		    legend: {
 		      data: [],
@@ -500,7 +575,11 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		    version: 1,
 		    tooltip : {
 		        trigger: 'item',
-		        formatter: "{b} <br/>number of loans: {c}"
+				formatter: null,
+		    },
+		    legend: {
+				show: false,
+				data: []
 		    },
 		    toolbox: {
 		        show : false
@@ -510,19 +589,23 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		        {
 		            name:'',
 		            type:'treemap',
+		            center: ['49.25%', '50%'],
+		            size: ['98%','98%'],
 		            itemStyle: {
 		                normal: {
 		                    label: {
 		                        show: true,
 		                        formatter: "{b}"
 		                    },
-		                    borderWidth: 1
+		                    borderWidth: 1,
+		                   	breadcrumb : {show: false}
 		                },
 		                emphasis: {
 		                    label: {
 		                        show: true
 		                    }
-		                }
+		                },
+
 		            },
 		            data:[]
 		        }
