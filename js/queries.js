@@ -53,6 +53,10 @@ angular.module('starter.queries', ['starter.config'])
 	o.queryLendingClubByGrade = o.genericQuery(queryConfig.lendingClubByGradeQuery);
 	o.queryLendingClubByState = o.genericQuery(queryConfig.lendingClubByStateQuery);
 
+	o.queryTicketSalesByState = o.genericQuery(queryConfig.ticketSalesByStateQuery);
+	o.queryTicketQuantityTrend = o.genericQuery(queryConfig.ticketQuantityTrendQuery);
+	o.queryTicketPriceCommission = o.genericQuery(queryConfig.ticketPriceCommission);
+
 	var buildEndpoint = function(service) {
 		var protocol = serverConfig.application.secure ? 'https' : 'http';
 		var hostname = serverConfig.application.host;

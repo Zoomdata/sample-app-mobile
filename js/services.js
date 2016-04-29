@@ -70,12 +70,28 @@ angular.module('starter.services', ['starter.queries','starter.config'])
       functions: []
     }, {
       id: 2,
-      name: 'Fusion Dashboard',
+      name: 'Ticket Sales',
       lastText: 'Multi-source ticket marketplace fusion',
       face: 'img/fusion.png',
       continuosUpdate: false,
       updateRate: -1,
-      visuals: [],
+      visuals: [
+        {
+          id: 0,
+          title: 'Tickets Sold and Transactions',
+          config: null
+        },
+        {
+          id: 1,
+          title: 'Ticket Sales by State',
+          config: null
+        },
+        {
+          id: 2,
+          title: 'Sales vs Commission',
+          config: null
+        }
+      ],
       functions: []
     }]
   };
@@ -92,13 +108,95 @@ angular.module('starter.services', ['starter.queries','starter.config'])
         o.fillLCLoansByState,
         o.fillLCTrend,
         o.fillLCLoansByGrade
-    ]
+    ];
+    o.dashboards[2].functions = [
+        o.fillTSalesQtyTrend,
+        o.fillTSalesPriceCommissionTrend,
+        o.fillTSalesByState
+    ];
+  }
+
+  o.fillTSalesQtyTrend = function() {
+    var visual = prepareVisual(2, 0, 'trend');
+    var processData = function(queryData) {
+        var qtySold = queryData.map(function(item) {
+            return item.current.metrics.qtysold.sum.toFixed(0);
+        });
+        var counts = queryData.map(function(item) {
+          return item.current.count;
+        });
+
+        var labels = queryData.map(function(item, index) {
+            var currentTime = moment(item.group[0],'YYYY-MM-DD HH:mm:ss');
+            return currentTime.format('MM/DD/YYYY');
+        }); 
+
+        visual.config.series[0].name = 'Tickets Sold';
+        visual.config.series[1].name = 'Transactions';
+        visual.config.legend.data = [visual.config.series[0].name, visual.config.series[1].name];
+        visual.config.series[0].data = qtySold;
+        visual.config.series[1].data = counts;
+        visual.config.xAxis[0].data = labels;
+        visual.config.yAxis[0].axisLabel.formatter = qtyFormatter;
+        visual.config.tooltip.formatter = multiSeriesTooltipQtyFormatter;
+
+        return visual.config;
+    }
+
+    return ZDAccess.queryTicketQuantityTrend(processData);    
+  }
+
+  o.fillTSalesByState = function() {
+    var visual = prepareVisual(2, 1, 'treeMap');
+      var processData = function(queryData) {
+        var data = queryData.map(function(item) {
+          return {value: +item.current.metrics.pricepaid.sum.toFixed(2), 
+                  name: item.group[0]};
+        });
+
+        visual.config.series[0].data = data;
+        visual.config.series[0].name = 'Sales Amount';
+        visual.config.tooltip.formatter = tooltipMoneyFormatter;
+
+        return visual.config;
+      };
+
+      return ZDAccess.queryTicketSalesByState(processData);
+  }
+
+  o.fillTSalesPriceCommissionTrend = function() {
+    var visual = prepareVisual(2, 2, 'trend');
+    var processData = function(queryData) {
+        var price = queryData.map(function(item) {
+            return item.current.metrics.pricepaid.sum.toFixed(0);
+        });
+        var commission = queryData.map(function(item) {
+            return item.current.metrics.commission.sum.toFixed(0);
+        });
+
+        var labels = queryData.map(function(item, index) {
+            var currentTime = moment(item.group[0],'YYYY-MM-DD HH:mm:ss');
+            return currentTime.format('MM/YYYY');
+        }); 
+
+        visual.config.series[0].name = 'Sales';
+        visual.config.series[1].name = 'Commission';
+        visual.config.legend.data = [visual.config.series[0].name, visual.config.series[1].name];
+        visual.config.series[0].data = price;
+        visual.config.series[1].data = commission;
+        visual.config.xAxis[0].data = labels;
+        visual.config.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
+        visual.config.tooltip.formatter = multiSeriesTooltipMoneyFormatter;
+
+        return visual.config;
+    }
+
+    return ZDAccess.queryTicketPriceCommission(processData);    
   }
 
   o.fillLCLoansByState = function() {
       var visual = prepareVisual(1, 0, 'treeMap');
       var processData = function(queryData) {
-        console.log(queryData);
         var propensity = queryData.map(function(item) {
           return +item.current.metrics.calc_default_propensity.calc.toFixed(2);
         });
@@ -108,6 +206,8 @@ angular.module('starter.services', ['starter.queries','starter.config'])
         });
 
         visual.config.series[0].data = data;
+        visual.config.series[0].name = 'Number of Loans';
+        visual.config.tooltip.formatter = tooltipCountFormatter;
 
         return visual.config;
       };
@@ -137,6 +237,7 @@ angular.module('starter.services', ['starter.queries','starter.config'])
         visual.config.series[1].data = loanAmt;
         visual.config.xAxis[0].data = labels;
         visual.config.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
+        visual.config.tooltip.formatter = multiSeriesTooltipMoneyFormatter;
 
         return visual.config;
     }
@@ -233,6 +334,7 @@ angular.module('starter.services', ['starter.queries','starter.config'])
         visual.config.series[1].data = plannedSales;
         visual.config.xAxis[0].data = labels;
         visual.config.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
+        visual.config.tooltip.formatter = multiSeriesTooltipMoneyFormatter;
 
         return visual.config;
     }
@@ -262,6 +364,7 @@ angular.module('starter.services', ['starter.queries','starter.config'])
           visual.config.series[1].data = plannedSales;
           visual.config.xAxis[0].data = labels;
           visual.config.yAxis[0].axisLabel.formatter = bigMoneyFormatter;
+          visual.config.tooltip.formatter = multiSeriesTooltipMoneyFormatter;
 
           return visual.config;
       }
@@ -310,16 +413,54 @@ angular.module('starter.services', ['starter.queries','starter.config'])
       return visual; 
   }
 
-  var bigMoneyFormatter = function (v) {
-    if (v > 999999 ) {
-      result = '$' + numeral(v/1000000).format('0,0') + ' M';
-    } else if (v > 999) {
-      result = '$' + numeral(v/1000).format('0,0') + ' K';
-    } else {
-      result = '$' + numeral(v).format('0,0');
+  var numberFormatter = function(isMoney) {
+    return function (v) {
+      var fmtPattern = isMoney ? '$0,0' : '0,0';
+      result = numeral(v).format(fmtPattern);
+      return result;
+    }   
+  }
+  var qtyFormatter = numberFormatter(false);
+  var moneyFormatter = numberFormatter(true);
+
+  var bigNumberFormatter = function(isMoney) {
+    return function (v) {
+      var fmtPattern = isMoney ? '$0,0' : '0,0';
+      if (v > 9999999) {
+        result = numeral(v/1000000).format(fmtPattern) + ' M';
+      } else if (v > 999999 ) {
+        result = numeral(v/1000000).format(fmtPattern + '.0') + ' M';
+      } else if (v > 999) {
+        result = numeral(v/1000).format(fmtPattern) + ' K';
+      } else {
+        result = numeral(v).format(fmtPattern);
+      }
+      return result;
     }
-    return result;
-  };
+  }
+  var bigMoneyFormatter = bigNumberFormatter(true);
+  var bigQtyFormatter = bigNumberFormatter(false);
+
+  var genericTooltipFormatter = function(isMoney) {
+    return function(params) {
+      var fmtPattern = isMoney ? '$0,000.' : '0,000.';
+      return params.seriesName + '<br/>'
+           + params.name + ' : ' + numeral(params.value).format(fmtPattern) + '<br/>';
+    }
+  }
+  var tooltipCountFormatter = genericTooltipFormatter(false);
+  var tooltipMoneyFormatter = genericTooltipFormatter(true);
+
+  var genericMultiSeriesTooltipFormatter = function(isMoney) {
+    return function(params) {
+      var fmtPattern = isMoney ? '$0,000.' : '0,000.';
+      return params[0].name + '<br/>'
+           + params[0].seriesName + ' : ' + numeral(params[0].value).format(fmtPattern) + '<br/>'
+           + params[1].seriesName + ' : ' + numeral(params[1].value).format(fmtPattern) + '<br/>';       
+    }
+  }
+  var multiSeriesTooltipMoneyFormatter = genericMultiSeriesTooltipFormatter(true);
+  var multiSeriesTooltipQtyFormatter = genericMultiSeriesTooltipFormatter(false);
 
   var myIndexOf = function(arr, name) {    
       for (var i = 0; i < arr.length; i++) {
