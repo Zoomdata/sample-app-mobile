@@ -1,7 +1,6 @@
 # zd-data-app-02
 
-Try this application live at http://demos.zoomdata.com/zd-mobile-app-02
-**Credentials:** demo/demo99
+Try this application live at http://demos.zoomdata.com/zd-mobile-app-02.  **Credentials:** demo/demo99
 
 This is a mobile data app example using the Zoomdata v2.2 with its SDK v2.0 to query the Real Time Sales datasource hosted by a Zoomdata instance at pubsdk.zoomdata.com.  It leverages Ionic/Angular as its mobile framework.
 
