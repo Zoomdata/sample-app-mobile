@@ -19,6 +19,7 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
   var play;
 
   var fillDashboard = function(dashboard, lastStep) {
+    console.log(dashboard);
     var dashFunctions = dashboard.functions;
     var promises = dashFunctions.map(function(f) {
       return f.call(Charts);
@@ -29,6 +30,8 @@ angular.module('starter.controllers', ['starter.services', 'starter.config'])
           visConfig.zd_data_status = 'ready';
           visConfig.version++;
         }); 
+        
+        dashboard.ready = true;
 
         if (lastStep) {
           lastStep();     

@@ -77,26 +77,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     }
   })
 
-  .state('tab.charts', {
-      url: '/charts',
-      views: {
-        'tab-charts': {
-          templateUrl: 'templates/tab-charts.html',
-          controller: 'ChartsCtrl'
-        }
-      }
-  })
-
-  .state('tab.chart-detail', {
-    url: '/charts/:chartId',
-    views: {
-      'tab-charts': {
-        templateUrl: 'templates/chart-detail.html',
-        controller: 'ChartDetailCtrl'
-      }
-    }
-  })
-
   .state('tab.account', {
     url: '/account',
     views: {
