@@ -4,24 +4,31 @@
     <p>
       {{dash.lastText}}
     </p>
-	<div ng-repeat="visual in dash.visuals">
-	    <div class="card">
-			<div class="item item-divider">{{visual.title}}
-				<a class="item-icon-right" href="#/tab/dash/{{dash.id}}/{{visual.id}}">
-					<i class="icon ion-ios-arrow-forward"></i>
-				</a>
-			</div>
-			<div ng-switch on="visual.config.zd_data_status">
-				<div ng-switch-when="ready">
+
+    <div ng-switch on="dash.ready">
+
+		<div ng-switch-when="true">
+			<div ng-repeat="visual in dash.visuals">
+			    <div class="card">
+					<div class="item item-divider">{{visual.title}}
+<!-- 						<a class="item-icon-right" href="#/tab/dash/{{dash.id}}/{{visual.id}}">
+							<i class="icon ion-ios-arrow-forward"></i>
+						</a> -->
+					</div>
+
 					<div data-iu-chart="visual.config" class="iuChart" 
 						ng-style="style(windowSize)">
 					</div>
-				</div>
-				<div ng-switch-when="not_ready">
-					<div style="height: 160px"></div>
-				</div>
+			    </div>
 			</div>
-	    </div>
+		</div>
+
+		<div ng-switch-when="false">
+			<div style="text-align: center; margin-top: 160px;">
+				<ion-spinner icon="lines" class="spinner-calm"></ion-spinner>
+			</div>
+		</div>
+		
 	</div>
 
   </ion-content>

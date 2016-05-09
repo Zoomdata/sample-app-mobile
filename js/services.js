@@ -13,6 +13,7 @@ angular.module('starter.services', ['starter.queries','starter.config'])
       name: 'Real Time Sales',
       lastText: 'Continuously generated sales data',
       face: 'img/rts.png',
+      ready: false,
       continuosUpdate: true,
       updateRate: 4000,
       visuals: [
@@ -48,6 +49,7 @@ angular.module('starter.services', ['starter.queries','starter.config'])
       name: 'Peer Lending',
       lastText: 'Default Propensity Analysis',
       face: 'img/securities.png',
+      ready: false,
       continuosUpdate: false,
       updateRate: -1,
       visuals: [
@@ -73,6 +75,7 @@ angular.module('starter.services', ['starter.queries','starter.config'])
       name: 'Ticket Sales',
       lastText: 'Multi-source ticket marketplace fusion',
       face: 'img/fusion.png',
+      ready: false,
       continuosUpdate: false,
       updateRate: -1,
       visuals: [
