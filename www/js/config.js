@@ -4,7 +4,8 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 	browser_dev_uri: "http://localhost:8100/%23/tab/dash",
 	browser_prod_uri: "http://demos.zoomdata.com/zd-mobile-app-02/%23/tab/dash"
 })
-.constant('serverConfig', {
+.constant('serverParams', {
+	dev: {
       credentials: {
           access_token: ''
       },
@@ -20,6 +21,25 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
           auth_uri: "https://pubsdk.zoomdata.com:8443/zoomdata/oauth/authorize",
           scope: ['read']
       }
+	},
+	prod: {
+      credentials: {
+          access_token: ''
+      },
+      application: {
+          secure: true,
+          host: 'developer.zoomdata.com',
+          port: 443,
+          path: '/zoomdata'
+      },
+      oauthOptions: {
+          client_id: "emQtbW9iaWxlLWFwcC0wMi1jbGllbnQxNDYyODg2MjY2MTAyOWMyMmUwYmItMGI4NS00NmI4LWJiNWItMjU4ODU4ZGRjMWRh",
+          redirect_uri: "",
+          auth_uri: "https://developer.zoomdata.com/zoomdata/oauth/authorize",
+          scope: ['read']
+      }		
+	} 
+
 })
 .constant('queryConfig', {
 		prodGroupQuery: {
@@ -613,16 +633,29 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		}
 	}
 })
-.factory('OAuthSupport', function($q, $cordovaOauth, serverConfig, redirect, production) {
+.factory('ServerConfig', function($q, $cordovaOauth, serverParams, redirect, production) {
+	var o = {}
+
+	o.get = function() {
+		if (production) {
+			return serverParams.prod;
+		} else {
+			return serverParams.dev;
+		}
+	}
+
+	return o;
+})
+.factory('OAuthSupport', function($q, $cordovaOauth, ServerConfig, redirect, production) {
 	var o = {};
 	o.authenticate = function() {
 		return $q(function (resolve, reject){
-			if (serverConfig.credentials.access_token === '') {
+			if (ServerConfig.get().credentials.access_token === '') {
 				ionic.Platform.ready(function(){
 					o.performOAuth(resolve, reject); 
 				});
 			} else {
-				resolve(serverConfig);
+				resolve(ServerConfig.get());
 			}
 		});
 	}
@@ -641,17 +674,17 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 	o.oauthAuthenticate = window.cordova === undefined ? 
 						$cordovaOauth.browserOnly : $cordovaOauth.generic;
 
-	serverConfig.oauthOptions.redirect_uri = o.obtainRedirect();
+	ServerConfig.get().oauthOptions.redirect_uri = o.obtainRedirect();
 
 	o.performOAuth = function(resolve, reject) {
 		o.oauthAuthenticate(
-		  serverConfig.oauthOptions.client_id, 
-		  serverConfig.oauthOptions.auth_uri,
-		  serverConfig.oauthOptions.scope,
-		  serverConfig.oauthOptions)
+		  ServerConfig.get().oauthOptions.client_id, 
+		  ServerConfig.get().oauthOptions.auth_uri,
+		  ServerConfig.get().oauthOptions.scope,
+		  ServerConfig.get().oauthOptions)
 		.then( function(result) {
 			  console.log("Response Object -> " + JSON.stringify(result));
-			  serverConfig.credentials.access_token = result.access_token;
+			  ServerConfig.get().credentials.access_token = result.access_token;
 			  resolve(result);
 			}, function(error) {
 			  console.log("Error -> " + error);
@@ -663,7 +696,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
     return o;
   }
 )
-.factory('OAuthFinish', function($location, serverConfig) {
+.factory('OAuthFinish', function($location, ServerConfig) {
 	var o = {};
 
 	o.checkToken = function() {
@@ -687,7 +720,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 	                          token_type: parameterMap.token_type, 
 	                          expires_in: parameterMap.expires_in, 
 	                          scope: parameterMap.scope };
-	        serverConfig.credentials.access_token = authResult.access_token;
+	        ServerConfig.get().credentials.access_token = authResult.access_token;
 	      } else {
 	        console.log("Problem authenticating");
 	      }
@@ -708,7 +741,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
                               token_type: parameterMap.token_type, 
                               expires_in: parameterMap.expires_in, 
                               scope: parameterMap.scope };
-            serverConfig.credentials.access_token = authResult.access_token;
+            ServerConfig.get().credentials.access_token = authResult.access_token;
           } else {
             console.log("Problem authenticating");
           }
