@@ -1,5 +1,5 @@
 angular.module('starter.queries', ['starter.config'])
-.factory('ZDAccess', function($http, $q, serverConfig, queryConfig) {
+.factory('ZDAccess', function($http, $q, ServerConfig, queryConfig) {
 	var o = {};
 	
 	o.genericQuery = function(query) {
@@ -10,8 +10,8 @@ angular.module('starter.queries', ['starter.config'])
 					console.log('ERROR: ZoomdataSDK is not available');
 				} 
 				window.ZoomdataSDK.createClient({
-				  credentials: serverConfig.credentials,
-				  application: serverConfig.application
+				  credentials: ServerConfig.get().credentials,
+				  application: ServerConfig.get().application
 				})
 				.then(function(client) {
 				  window.client = client;
@@ -58,10 +58,10 @@ angular.module('starter.queries', ['starter.config'])
 	o.queryTicketPriceCommission = o.genericQuery(queryConfig.ticketPriceCommission);
 
 	var buildEndpoint = function(service) {
-		var protocol = serverConfig.application.secure ? 'https' : 'http';
-		var hostname = serverConfig.application.host;
-		var port = serverConfig.application.port;
-		var path = serverConfig.application.path;
+		var protocol = ServerConfig.get().application.secure ? 'https' : 'http';
+		var hostname = ServerConfig.get().application.host;
+		var port = ServerConfig.get().application.port;
+		var path = ServerConfig.get().application.path;
 		var endpoint = protocol + '://' + hostname + ":" + port + path + service;
 
 		return endpoint;
@@ -69,7 +69,7 @@ angular.module('starter.queries', ['starter.config'])
 
 	o.logout = function() {
 		// forget the current token
-		serverConfig.credentials.access_token = '';
+		ServerConfig.get().credentials.access_token = '';
 		return $http.post(buildEndpoint('/logout'));
 	}
 
