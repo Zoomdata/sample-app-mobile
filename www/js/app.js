@@ -105,5 +105,5 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 .constant('moment', window.moment)
 .constant('numeral', window.numeral)
 // switch to false for development mode
-.constant('production', true)  
+.constant('production', false)  
 ;
