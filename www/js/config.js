@@ -33,7 +33,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
           path: '/zoomdata'
       },
       oauthOptions: {
-          client_id: "emQtbW9iaWxlLWFwcC0wMi1jbGllbnQxNDYyODg2MjY2MTAyOWMyMmUwYmItMGI4NS00NmI4LWJiNWItMjU4ODU4ZGRjMWRh",
+          client_id: "emQtbW9iaWxlLWFwcC0wMi1jbGllbnQxNDYzNjE4Nzc5OTcxMTcxZWU0MDgtOGNmOS00M2IxLWE0YjgtNTlkZjc0NGNhOTZj",
           redirect_uri: "",
           auth_uri: "https://developer.zoomdata.com/zoomdata/oauth/authorize",
           scope: ['read']
