@@ -15,6 +15,10 @@
   <preference name="android-minSdkVersion" value="16"/>
   <preference name="BackupWebStorage" value="none"/>
   <feature name="StatusBar">
-    <param name="ios-package" value="CDVStatusBar" onload="true"/>
+    <param name="ios-package" onload="true" value="CDVStatusBar"/>
   </feature>
+  <engine name="ios" spec="~4.1.1"/>
+  <platform name="ios">
+    <preference name="Orientation" value="all"/>
+  </platform>
 </widget>
