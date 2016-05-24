@@ -1,0 +1,114 @@
+{
+  "_args": [
+    [
+      "zoomdata-client",
+      "/Users/jorgealarcon/projects/zd-mobile-app-02"
+    ]
+  ],
+  "_from": "zoomdata-client@latest",
+  "_id": "zoomdata-client@2.0.8",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/zoomdata-client",
+  "_nodeVersion": "5.11.0",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/zoomdata-client-2.0.8.tgz_1463993769925_0.09140135790221393"
+  },
+  "_npmUser": {
+    "email": "ci@zoomdata.com",
+    "name": "zoomdata"
+  },
+  "_npmVersion": "3.8.6",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "zoomdata-client",
+    "raw": "zoomdata-client",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/zoomdata-client/-/zoomdata-client-2.0.8.tgz",
+  "_shasum": "773326643ec8dc75bf3d97fa7078b6078a9c21d7",
+  "_shrinkwrap": null,
+  "_spec": "zoomdata-client",
+  "_where": "/Users/jorgealarcon/projects/zd-mobile-app-02",
+  "author": "",
+  "dependencies": {
+    "apply-css": "1.0.2",
+    "chroma-js": "1.1.1",
+    "colorbrewer": "0.0.2",
+    "data-set": "4.0.0",
+    "inherit": "2.2.2",
+    "lodash": "3.9.2",
+    "moment": "2.9.0",
+    "numeral": "1.5.3",
+    "promise": "6.1.0",
+    "websocket": "1.0.22",
+    "xhr": "2.0.1"
+  },
+  "description": "Zoomdata Standalne Web Client (SDK)",
+  "devDependencies": {
+    "browserify-istanbul": "0.2.1",
+    "function-bind": "1.0.2",
+    "grunt": "0.4.5",
+    "grunt-browserify": "3.5.0",
+    "grunt-cli": "0.1.13",
+    "grunt-contrib-clean": "0.6.0",
+    "grunt-contrib-copy": "1.0.0",
+    "grunt-contrib-uglify": "0.7.0",
+    "grunt-contrib-watch": "0.6.1",
+    "grunt-jsdoc": "0.6.2",
+    "grunt-karma": "0.10.1",
+    "jasmine-core": "2.2.0",
+    "karma": "0.12.31",
+    "karma-browserify": "4.1.2",
+    "karma-coverage": "0.2.6",
+    "karma-jasmine": "0.3.5",
+    "karma-jasmine-ajax": "0.1.13",
+    "karma-junit-reporter": "0.3.3",
+    "karma-phantomjs-launcher": "0.1.4",
+    "karma-threshold-reporter": "0.1.7",
+    "load-grunt-tasks": "3.0.0",
+    "mocha": "2.2.5",
+    "mold-source-map": "0.3.0",
+    "pngparse": "2.0.1",
+    "through": "2.3.6",
+    "time-grunt": "1.0.0",
+    "tsify": "0.13.2"
+  },
+  "directories": {
+    "lib": "./distribute/sdk/2.0"
+  },
+  "dist": {
+    "shasum": "773326643ec8dc75bf3d97fa7078b6078a9c21d7",
+    "tarball": "https://registry.npmjs.org/zoomdata-client/-/zoomdata-client-2.0.8.tgz"
+  },
+  "files": [
+    "distribute"
+  ],
+  "keywords": [
+    "Visualization",
+    "BigData"
+  ],
+  "license": "ISC",
+  "main": "distribute/sdk/2.0/zoomdata-client.js",
+  "maintainers": [
+    {
+      "email": "ci@zoomdata.com",
+      "name": "zoomdata"
+    }
+  ],
+  "name": "zoomdata-client",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {},
+  "scripts": {
+    "test": "grunt test"
+  },
+  "version": "2.0.8"
+}
