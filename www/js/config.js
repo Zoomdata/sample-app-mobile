@@ -2,7 +2,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 .constant('redirect', {
 	cordova_uri: "http://localhost/callback",
 	browser_dev_uri: "http://localhost:8100/%23/tab/dash",
-	browser_prod_uri: "http://demos.zoomdata.com/zd-mobile-app-02/%23/tab/dash"
+	browser_prod_uri: "https://developer.zoomdata.com/sample/mobile/%23/tab/dash"
 })
 .constant('serverParams', {
 	dev: {
