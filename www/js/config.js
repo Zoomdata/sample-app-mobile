@@ -17,9 +17,9 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
           path: '/zoomdata'
       },
       oauthOptions: {
-          client_id: "emQtbW9iaWxlLWFwcC0wMi1jbGllbnQxNDYwOTI4OTA5ODkxNmU5MmM5MGYtZGU3Ny00OTI2LTk4NzUtYjMzNjRhNzliZGMw",
+          client_id: "TW9iaWxlMTQ2Nzc0NTU0OTcyNzkwMmM1YWE0LTBjMWUtNDU3OC1iODEzLWI2M2M3YWRjZTIzYw==",
           redirect_uri: "",
-          auth_uri: "https://pubsdk.zoomdata.com:8443/zoomdata/oauth/authorize",
+          auth_uri: "https://pubsdk.zoomdata.com/zoomdata/oauth/authorize",
           scope: ['read']
       }
 	},
@@ -29,14 +29,14 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
       },
       application: {
           secure: true,
-          host: 'demo.zoomdata.com',
+          host: 'developer.zoomdata.com',
           port: 443,
           path: '/zoomdata'
       },
       oauthOptions: {
-          client_id: "emQtZGF0YS1tb2JpbGUtMDIxNDY0MzYxMDQ3NjEyNzYxZmE0MjctN2NjYS00OWY5LWFhNzYtYWU5ZTI4ZTc2NWEy",
+          client_id: "emQtbW9iaWxlLWFwcC0wMi1jbGllbnQxNDYzNjE4Nzc5OTcxMTcxZWU0MDgtOGNmOS00M2IxLWE0YjgtNTlkZjc0NGNhOTZj",
           redirect_uri: "",
-          auth_uri: "https://demo.zoomdata.com/zoomdata/oauth/authorize",
+          auth_uri: "https://developer.zoomdata.com/zoomdata/oauth/authorize",
           scope: ['read']
       }		
 	} 
@@ -55,7 +55,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		       time: {
 				 from: '+$start_of_day',
 				 to: '+$now',
-		         timeField: '_ts'
+		         timeField: 'ts'
 		       },
 		       filters: [],
 		       groups: [{
@@ -82,7 +82,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		         timeWindowScale: 'ROLLING'
 		       },
 		       time: {
-		         timeField: '_ts'
+		         timeField: 'ts'
 		       },
 		       filters: [],
 		       groups: [{
@@ -111,13 +111,13 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		         timeWindowScale: 'ROLLING'
 		       },
 		       time: {
-		         timeField: '_ts'
+		         timeField: 'ts'
 		       },
 		       groups: [{
-		         name: '$to_minute(_ts)',
+		         name: '$to_minute(ts)',
 		         sort: {
 	              'dir': 'asc',
-	              'name': '_ts'
+	              'name': 'ts'
 		         },
 		         'limit': 1000
 		       }],
@@ -144,13 +144,13 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		       time: {
 		       	 from: '+$now_-7_day',
       			 to: '+$now',
-		         timeField: '_ts'
+		         timeField: 'ts'
 		       },
 		       groups: [{
-		         name: '$to_day(_ts)',
+		         name: '$to_day(ts)',
 		         sort: {
 	              'dir': 'asc',
-	              'name': '_ts'
+	              'name': 'ts'
 		         },
 		         'limit': 1000
 		       }],
@@ -175,7 +175,7 @@ angular.module('starter.config', ['ionic', 'ngCordovaOauth'])
 		         timeWindowScale: 'ROLLING'
 		       },
 		       time: {
-		         timeField: '_ts'
+		         timeField: 'ts'
 		       },
 		       filters: [],
 		       groups: [{
